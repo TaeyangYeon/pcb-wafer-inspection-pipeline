@@ -1,0 +1,448 @@
+# PCB & Wafer Vision Inspection Pipeline - Project Plan
+## Portfolio Project 2
+
+---
+
+## Project Summary
+
+A production-grade AI visual inspection pipeline for PCB and semiconductor wafer defect detection.
+Unlike Project 1 (single-program model trainer + inspector), this project simulates a full
+industrial inspection line: automatic image intake, dual-model AI inference, real-time dashboard,
+persistent database logging, drift monitoring, and a model management interface.
+
+Target companies: Samsung/SK semiconductor vendors, SFA, Hanwha, AI vision startups
+Development machine: Intel Mac (macOS)
+Training environment: Google Colab T4 GPU
+Development period: ~8 weeks
+
+---
+
+## Goals
+
+### Technical Goals
+1. Demonstrate Anomaly Detection (PatchCore, unsupervised) - different from Project 1's supervised Detection
+2. Demonstrate Segmentation (YOLOv8-seg) - pixel-level mask output, different from bounding box
+3. Build a server-client pipeline architecture - different from Project 1's single-app structure
+4. Add persistent database with ORM - new capability not shown in Project 1
+5. Implement drift monitoring - operational ML concept not shown in Project 1
+6. Maintain TDD discipline (NUnit, test-first development)
+
+### Portfolio Goals
+1. Show progression: "I can build models" → "I can operate AI systems"
+2. Cover both known defect types (PCB, labeled) and unknown defects (Anomaly, unlabeled)
+3. Demonstrate system thinking: data in → inference → logging → monitoring → alert
+4. All C# code follows SOLID + MVVM + DI patterns established in Project 1
+
+---
+
+## Datasets
+
+### Dataset 1: PCB Defect Dataset (Peking University)
+- Source: https://robotics.pkusz.edu.cn/resources/dataset/
+- Images: 1,386 PCB images
+- Defect classes: Missing Hole, Mouse Bite, Open Circuit, Short Circuit, Spur, Spurious Copper
+- Use: YOLOv8-seg training (supervised, labeled defects)
+- Why: Real PCB terminology matches semiconductor/electronics industry vocabulary
+
+### Dataset 2: MVTec AD - Selected Categories
+- Source: https://www.mvtec.com/company/research/datasets/mvtec-ad
+- Categories used: transistor, grid (electronics-adjacent)
+- Use: PatchCore training (unsupervised, normal images only)
+- Why: Industry-standard anomaly detection benchmark, enables comparison with published results
+
+---
+
+## AI Models
+
+### Model 1: PatchCore (Anomaly Detection)
+- Task: Unsupervised anomaly detection - trained on normal images only
+- Input: Any product image (transistor or grid category)
+- Output: Anomaly score (0.0 ~ 1.0) + pixel-level anomaly map
+- Why PatchCore: Current state-of-the-art on MVTec AD benchmark, implementable without GPU at inference
+- Implementation: From scratch using timm backbone (WideResNet50) + coreset subsampling
+- Export: Not ONNX - PatchCore uses a memory bank, exported as serialized numpy array + ONNX feature extractor
+
+### Model 2: YOLOv8-seg (Instance Segmentation)
+- Task: Supervised segmentation - detects known PCB defect types with pixel masks
+- Input: PCB image
+- Output: Defect class + bounding box + pixel mask + confidence score
+- Why segmentation: Pixel mask enables defect area measurement (mm^2 equivalent), stronger than bbox alone
+- Export: ONNX opset 21 (same as Project 1, proven compatible with OnnxRuntime 1.20.1)
+
+### Inference Strategy (2-Stage Pipeline)
+```
+Input Image
+    |
+    v
+Stage 1: PatchCore Anomaly Detection
+    |-- Anomaly Score < threshold --> PASS (OK)
+    |-- Anomaly Score >= threshold --> SUSPECT
+                                           |
+                                           v
+                                  Stage 2: YOLOv8-seg
+                                       |-- No detection --> ANOMALY (unknown defect)
+                                       |-- Detection found --> NG (known defect type + mask)
+```
+This mirrors real-world inspection logic: fast anomaly filter first, detailed classification second.
+
+---
+
+## System Architecture
+
+```
++----------------------------------------------------------+
+|  Program 1: AI Training Pipeline (Python + Streamlit)    |
+|                                                          |
+|  Tab 1 - Data     : PCB dataset viewer + MVTec viewer    |
+|  Tab 2 - Train    : PatchCore training + YOLOv8-seg      |
+|  Tab 3 - Eval     : Anomaly score dist + seg metrics     |
+|  Tab 4 - Export   : ONNX export + memory bank export     |
+|  Tab 5 - Analysis : GradCAM-equivalent for PatchCore     |
++----------------------------------------------------------+
+                         |
+              ONNX + memory bank files
+                         |
+                         v
++----------------------------------------------------------+
+|  Program 2: Inspection Line System (C# + Avalonia UI)    |
+|                                                          |
+|  [File Watcher Service]                                  |
+|   Monitors input folder, simulates camera trigger        |
+|        |                                                 |
+|        v                                                 |
+|  [FastAPI Inference Server - Python]                     |
+|   PatchCore inference (Python, memory bank lookup)       |
+|   YOLOv8-seg inference (ONNX Runtime)                   |
+|   Endpoint: POST /inspect                               |
+|        |                                                 |
+|        v                                                 |
+|  [C# Inspection Client]                                  |
+|   HTTP client calls FastAPI                              |
+|   Parses result, renders overlay                         |
+|        |                                                 |
+|        v                                                 |
+|  [SQLite Database via EF Core ORM]                       |
+|   Saves every inspection record                          |
+|   Schema: InspectionRecords, DefectDetails, ModelVersions|
+|        |                                                 |
+|        v                                                 |
+|  [Real-time Dashboard]                                   |
+|   Throughput (pcs/min), NG rate (%), score trend chart   |
+|   Alarm when NG rate exceeds threshold                   |
+|        |                                                 |
+|        v                                                 |
+|  [Drift Monitor]                                         |
+|   Anomaly score distribution shift detection (KS-test)   |
+|   Triggers "Retraining Recommended" alert in UI          |
++----------------------------------------------------------+
+```
+
+---
+
+## Program 1 - Python Training Pipeline
+
+### Tech Stack
+- Python 3.11
+- PyTorch + timm (PatchCore backbone)
+- Ultralytics YOLOv8 (segmentation)
+- Streamlit (UI)
+- FastAPI (inference server, separate process)
+- MLflow (experiment tracking)
+- scikit-learn (KS-test for drift)
+- numpy, opencv-python, matplotlib, plotly
+
+### Tab Structure
+| Tab | Content |
+|-----|---------|
+| Data | PCB dataset browser + bounding box overlay, MVTec dataset browser, class distribution |
+| Train | PatchCore training config (backbone, coreset ratio), YOLOv8-seg training config, Colab notebook link |
+| Eval | PatchCore: ROC curve, anomaly score distribution, threshold selector. Seg: mAP, mask IoU, FP/FN viewer |
+| Export | ONNX export (seg model), memory bank export (PatchCore), model version log |
+| Monitor | Anomaly score trend chart, KS-test result, drift alert, retraining recommendation |
+
+### FastAPI Inference Server
+- Endpoint: POST /inspect { image_base64, mode: "anomaly" | "segment" | "pipeline" }
+- Response: { anomaly_score, anomaly_map_base64, detections: [{class, confidence, bbox, mask}], stage_used }
+- Runs as separate process: `uvicorn server:app --port 8502`
+- Reuses PatchCore memory bank loaded at startup
+
+---
+
+## Program 2 - C# Inspection Line System
+
+### Tech Stack
+- C# .NET 10
+- Avalonia UI + FluentAvalonia + CommunityToolkit.Mvvm (same as Project 1)
+- Entity Framework Core + SQLite (ORM + database)
+- Microsoft.Extensions.DependencyInjection (same as Project 1)
+- NUnit + Moq + coverlet (same as Project 1)
+- System.Net.Http (HttpClient for FastAPI calls)
+- LiveChartsCore.SkiaSharpView.Avalonia (real-time charts)
+
+### Project Structure
+```
+02_inspection_pipeline/
++-- InspectionPipeline.sln
++-- InspectionPipeline.Core/
+|   +-- Interfaces/
+|   |   +-- IFileWatcherService.cs
+|   |   +-- IInspectionApiClient.cs
+|   |   +-- IInspectionRepository.cs
+|   |   +-- IDriftMonitor.cs
+|   |   +-- IAlarmService.cs
+|   |   +-- IImageOverlayRenderer.cs
+|   +-- Models/
+|   |   +-- InspectionRecord.cs       (EF Core entity)
+|   |   +-- DefectDetail.cs           (EF Core entity)
+|   |   +-- ModelVersion.cs           (EF Core entity)
+|   |   +-- AnomalyResult.cs
+|   |   +-- SegmentationResult.cs
+|   |   +-- PipelineResult.cs
+|   |   +-- DriftReport.cs
+|   |   +-- AlarmEvent.cs
+|   +-- Services/
+|   |   +-- FileWatcherService.cs
+|   |   +-- InspectionApiClient.cs
+|   |   +-- InspectionRepository.cs
+|   |   +-- DriftMonitor.cs
+|   |   +-- AlarmService.cs
+|   |   +-- ImageOverlayRenderer.cs
+|   +-- Data/
+|       +-- InspectionDbContext.cs     (EF Core DbContext)
+|       +-- Migrations/                (EF Core migrations)
++-- InspectionPipeline.UI/
+|   +-- DependencyInjection/
+|   |   +-- ServiceCollectionExtensions.cs
+|   +-- ViewModels/
+|   |   +-- MainViewModel.cs
+|   |   +-- DashboardViewModel.cs
+|   |   +-- InspectionViewModel.cs
+|   |   +-- HistoryViewModel.cs
+|   |   +-- MonitorViewModel.cs
+|   |   +-- SettingsViewModel.cs
+|   +-- Views/
+|       +-- MainWindow.axaml
+|       +-- DashboardView.axaml
+|       +-- InspectionView.axaml
+|       +-- HistoryView.axaml
+|       +-- MonitorView.axaml
+|       +-- SettingsView.axaml
++-- InspectionPipeline.Tests/
+    +-- Core/
+    |   +-- FileWatcherServiceTests.cs
+    |   +-- InspectionApiClientTests.cs
+    |   +-- InspectionRepositoryTests.cs
+    |   +-- DriftMonitorTests.cs
+    |   +-- AlarmServiceTests.cs
+    |   +-- ImageOverlayRendererTests.cs
+    +-- ViewModels/
+    |   +-- DashboardViewModelTests.cs
+    |   +-- InspectionViewModelTests.cs
+    |   +-- HistoryViewModelTests.cs
+    |   +-- MonitorViewModelTests.cs
+    +-- Integration/
+        +-- DiContainerTests.cs
+        +-- DatabaseIntegrationTests.cs
+        +-- PipelineIntegrationTests.cs
+```
+
+### UI Pages
+| Page | Content |
+|------|---------|
+| Dashboard | Real-time throughput, NG rate %, anomaly score trend chart, alarm banner |
+| Inspection | Manual image load + run, stage result display (anomaly score + seg mask overlay) |
+| History | SQLite query browser, filter by date/result/model version, CSV export |
+| Monitor | Drift report (KS-test score, score distribution chart), retraining recommendation alert |
+| Settings | API server URL, watch folder path, thresholds, model version, auto-start toggle |
+
+### Database Schema (EF Core + SQLite)
+```
+InspectionRecords
+- Id (PK, auto)
+- Timestamp
+- ImagePath
+- FinalResult (OK / ANOMALY / NG)
+- StageUsed (Anomaly / Segment / Pipeline)
+- AnomalyScore (float)
+- InferenceTimeMs (float)
+- ModelVersionId (FK)
+
+DefectDetails
+- Id (PK, auto)
+- InspectionRecordId (FK)
+- ClassName
+- Confidence
+- BboxX, BboxY, BboxW, BboxH
+- MaskArea (pixel count)
+
+ModelVersions
+- Id (PK, auto)
+- ModelName
+- Version
+- LoadedAt
+- FilePath
+```
+
+---
+
+## EF Core ORM Decisions
+
+### Why EF Core
+- Industry standard ORM for .NET, used in production ASP.NET systems
+- Code-first migrations: schema defined in C# models, not raw SQL
+- Enables proper unit testing via InMemory provider (no SQLite file needed in tests)
+- Demonstrates modern .NET data access patterns
+
+### Testing Strategy for DB
+- Unit tests: use EF Core InMemory provider (Microsoft.EntityFrameworkCore.InMemory)
+- Integration tests: use real SQLite file in temp directory, deleted after test
+- Never mock DbContext directly - use repository pattern so only IInspectionRepository is mocked in ViewModel tests
+
+---
+
+## NuGet Packages
+
+### InspectionPipeline.Core
+- Microsoft.Extensions.DependencyInjection 10.x
+- Microsoft.Extensions.Logging.Abstractions 10.x
+- Microsoft.EntityFrameworkCore 9.x
+- Microsoft.EntityFrameworkCore.Sqlite 9.x
+- Microsoft.EntityFrameworkCore.InMemory 9.x (test provider)
+- OpenCvSharp4 4.x
+- OpenCvSharp4.runtime.osx.10.15-x64 (Intel Mac)
+- System.Net.Http (HttpClient, built-in)
+
+### InspectionPipeline.UI
+- Avalonia
+- Avalonia.Themes.Fluent
+- FluentAvalonia
+- CommunityToolkit.Mvvm
+- Microsoft.Extensions.DependencyInjection 10.x
+- LiveChartsCore.SkiaSharpView.Avalonia (real-time charts)
+
+### InspectionPipeline.Tests
+- NUnit 4.x
+- NUnit3TestAdapter
+- Microsoft.NET.Test.Sdk
+- Moq
+- coverlet.collector
+- Microsoft.EntityFrameworkCore.InMemory
+
+---
+
+## Development Schedule (8 Weeks)
+
+### Week 1: Data + PatchCore Training
+- Day 1: Download PCB dataset, explore, write data_manager.py
+- Day 2: PatchCore implementation (timm WideResNet50 backbone, feature extraction)
+- Day 3: Coreset subsampling, memory bank construction, save/load
+- Day 4: PatchCore evaluation (ROC, AUROC, threshold selection)
+- Day 5: Streamlit Data tab + Train tab (PatchCore)
+
+### Week 2: YOLOv8-seg Training + Eval
+- Day 6: PCB dataset YOLO-seg format conversion (polygon labels)
+- Day 7: Colab YOLOv8-seg training (100 epochs)
+- Day 8: Segmentation eval (mAP, mask IoU, FP/FN viewer)
+- Day 9: Streamlit Eval tab (both models)
+- Day 10: Export tab (ONNX + memory bank export), MLflow integration
+
+### Week 3: FastAPI Inference Server
+- Day 11: FastAPI server skeleton, /health endpoint, /inspect endpoint
+- Day 12: PatchCore inference integration (memory bank loading)
+- Day 13: YOLOv8-seg ONNX inference integration
+- Day 14: 2-stage pipeline logic (anomaly → segment)
+- Day 15: Server tests, response format finalization
+
+### Week 4: C# Core Layer + EF Core
+- Day 16: Solution setup, Core project, all interfaces defined
+- Day 17: EF Core DbContext + entity models + migrations
+- Day 18: InspectionRepository (CRUD) + unit tests (InMemory)
+- Day 19: InspectionApiClient (HttpClient) + unit tests (Moq)
+- Day 20: FileWatcherService + unit tests
+
+### Week 5: C# Services + DI
+- Day 21: ImageOverlayRenderer (anomaly heatmap + seg mask) + tests
+- Day 22: DriftMonitor (KS-test in C#) + AlarmService + tests
+- Day 23: DI container setup + ServiceCollectionExtensions
+- Day 24: Integration tests (DI + DB + API client)
+- Day 25: All Core tests passing (target: 80+ tests)
+
+### Week 6: C# UI Layer
+- Day 26: MainWindow navigation, dark theme (Catppuccin Mocha, same as Project 1)
+- Day 27: DashboardView (throughput, NG rate, chart)
+- Day 28: InspectionView (manual run, 2-stage result display)
+- Day 29: HistoryView (DB query table, filter, CSV export)
+- Day 30: MonitorView + SettingsView
+
+### Week 7: Integration + Testing
+- Day 31: ViewModel unit tests (Dashboard, Inspection, History, Monitor)
+- Day 32: End-to-end integration test (File Watcher → API → DB → Dashboard)
+- Day 33: Edge case testing (API down, empty DB, malformed image)
+- Day 34: Streamlit Monitor tab (drift visualization)
+- Day 35: All tests passing, coverage report
+
+### Week 8: Polish + Documentation
+- Day 36: README.md (architecture diagram, dataset info, how to run)
+- Day 37: Demo video recording (Program 1 training flow + Program 2 live pipeline)
+- Day 38: GitHub Wiki (PatchCore implementation guide, 2-stage pipeline explanation)
+- Day 39: Interview prep notes (key talking points for each technical decision)
+- Day 40: Final GitHub push, portfolio submission ready
+
+---
+
+## Test Strategy
+
+### Naming Convention (same as Project 1)
+MethodName_StateUnderTest_ExpectedBehavior
+
+### Test Targets
+| Class | Test Type | Mock Strategy |
+|-------|-----------|---------------|
+| InspectionRepository | Unit (InMemory EF) | Use real InMemory DB |
+| InspectionApiClient | Unit | Mock HttpClient via HttpMessageHandler |
+| FileWatcherService | Unit | Mock filesystem events |
+| DriftMonitor | Unit | Pure logic, no mocks needed |
+| AlarmService | Unit | Mock IInspectionRepository |
+| DashboardViewModel | Unit | Mock IInspectionRepository + IAlarmService |
+| InspectionViewModel | Unit | Mock IInspectionApiClient + IInspectionRepository |
+| DatabaseIntegration | Integration | Real SQLite in temp directory |
+| PipelineIntegration | Integration | Real DB + Mocked API client |
+
+### Target Test Count
+- Core services: ~60 tests
+- ViewModels: ~40 tests
+- Integration: ~20 tests
+- Total target: 120+ tests
+
+---
+
+## Known Risks and Mitigations
+
+| Risk | Mitigation |
+|------|------------|
+| PatchCore inference too slow on CPU | Use coreset subsampling to reduce memory bank size; benchmark and document |
+| PCB dataset polygon labels not in YOLO-seg format | Write conversion script, document format |
+| LiveChartsCore Avalonia compatibility on Intel Mac | Verify package version early in Week 6, fallback to Canvas-based chart if needed |
+| EF Core migrations conflict | Use single migration per major schema change, never edit existing migration files |
+| FastAPI server not running when C# client starts | FileWatcherService checks API /health before starting; shows clear error in UI |
+| Colab session expires during training | Save checkpoint every 10 epochs, document resume procedure |
+
+---
+
+## Key Differentiators vs Project 1
+
+| Dimension | Project 1 | Project 2 |
+|-----------|-----------|-----------|
+| ML Task | Object Detection (supervised) | Anomaly Detection + Segmentation |
+| Learning paradigm | Labeled bounding boxes | Unsupervised (normal only) + labeled masks |
+| Model origin | Ultralytics library | PatchCore implemented from paper |
+| System topology | Single app | Server + Client pipeline |
+| Data persistence | CSV export only | SQLite via EF Core ORM |
+| Operational monitoring | None | Drift detection + alarm |
+| Input trigger | Manual file open | Automatic folder watch |
+| Output granularity | Bounding box | Pixel mask + anomaly heatmap |
+
+---
+
+Last updated: Project start
+Status: Planning phase
