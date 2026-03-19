@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="InspectionPipeline.Core/InspectionPipeline.Core.csproj" />
+  <Project Path="InspectionPipeline.Tests/InspectionPipeline.Tests.csproj" />
+  <Project Path="InspectionPipeline.UI/InspectionPipeline.UI.csproj" />
+</Solution>

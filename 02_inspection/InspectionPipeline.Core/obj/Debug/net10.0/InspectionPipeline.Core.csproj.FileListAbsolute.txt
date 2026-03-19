@@ -1,0 +1,15 @@
+/Users/geseuteu/pcb-wafer-inspection-pipeline/02_inspection/InspectionPipeline.Core/bin/Debug/net10.0/InspectionPipeline.Core.deps.json
+/Users/geseuteu/pcb-wafer-inspection-pipeline/02_inspection/InspectionPipeline.Core/bin/Debug/net10.0/InspectionPipeline.Core.runtimeconfig.json
+/Users/geseuteu/pcb-wafer-inspection-pipeline/02_inspection/InspectionPipeline.Core/bin/Debug/net10.0/InspectionPipeline.Core.dll
+/Users/geseuteu/pcb-wafer-inspection-pipeline/02_inspection/InspectionPipeline.Core/bin/Debug/net10.0/InspectionPipeline.Core.pdb
+/Users/geseuteu/pcb-wafer-inspection-pipeline/02_inspection/InspectionPipeline.Core/obj/Debug/net10.0/InspectionPipeline.Core.csproj.AssemblyReference.cache
+/Users/geseuteu/pcb-wafer-inspection-pipeline/02_inspection/InspectionPipeline.Core/obj/Debug/net10.0/InspectionPipeline.Core.GeneratedMSBuildEditorConfig.editorconfig
+/Users/geseuteu/pcb-wafer-inspection-pipeline/02_inspection/InspectionPipeline.Core/obj/Debug/net10.0/InspectionPipeline.Core.AssemblyInfoInputs.cache
+/Users/geseuteu/pcb-wafer-inspection-pipeline/02_inspection/InspectionPipeline.Core/obj/Debug/net10.0/InspectionPipeline.Core.AssemblyInfo.cs
+/Users/geseuteu/pcb-wafer-inspection-pipeline/02_inspection/InspectionPipeline.Core/obj/Debug/net10.0/InspectionPipeline.Core.csproj.CoreCompileInputs.cache
+/Users/geseuteu/pcb-wafer-inspection-pipeline/02_inspection/InspectionPipeline.Core/obj/Debug/net10.0/InspectionPipeline.Core.sourcelink.json
+/Users/geseuteu/pcb-wafer-inspection-pipeline/02_inspection/InspectionPipeline.Core/obj/Debug/net10.0/InspectionPipeline.Core.dll
+/Users/geseuteu/pcb-wafer-inspection-pipeline/02_inspection/InspectionPipeline.Core/obj/Debug/net10.0/refint/InspectionPipeline.Core.dll
+/Users/geseuteu/pcb-wafer-inspection-pipeline/02_inspection/InspectionPipeline.Core/obj/Debug/net10.0/InspectionPipeline.Core.pdb
+/Users/geseuteu/pcb-wafer-inspection-pipeline/02_inspection/InspectionPipeline.Core/obj/Debug/net10.0/InspectionPipeline.Core.genruntimeconfig.cache
+/Users/geseuteu/pcb-wafer-inspection-pipeline/02_inspection/InspectionPipeline.Core/obj/Debug/net10.0/ref/InspectionPipeline.Core.dll

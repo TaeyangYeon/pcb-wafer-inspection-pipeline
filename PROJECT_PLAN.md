@@ -446,3 +446,40 @@ MethodName_StateUnderTest_ExpectedBehavior
 
 Last updated: Project start
 Status: Planning phase
+
+---
+
+## Daily Progress
+
+### Day 1 - COMPLETE
+- Python 3.11 environment: pyenv + venv at .venv/
+- Folder structure created: 01_training/ with app/, src/, data/, models/, outputs/, scripts/
+- requirements.txt: torch==2.4.1+cu121, torchvision==0.19.1+cu121, ultralytics==8.2.97, streamlit==1.37.1, fastapi==0.104.1, timm==1.0.9, scikit-learn==1.5.1, opencv-python==4.10.0.84, matplotlib==3.9.2, plotly==5.24.1, Pillow==10.4.0, uvicorn==0.30.6
+- PCB dataset downloaded to: 01_training/data/raw/pcb/
+  - Total images: 10,668
+  - Classes: missing_hole, mouse_bite, open_circuit, short, spur, spurious_copper
+  - Distribution: missing_hole=1832, mouse_bite=1852, open_circuit=1740,
+                  short=1732, spur=1752, spurious_copper=1760
+  - Train/val split (stratified 80/20): train=8532, val=2136
+  - All 10,668 images have matching XML annotations
+- data_manager.py: PCBDataManager class created at 01_training/src/data_manager.py
+  - Methods: get_class_names, get_image_paths, get_split_counts,
+             get_class_distribution, get_sample_items
+  - Smoke test: PASSED
+- Issues: None
+
+### Day 2 - COMPLETE
+- MCP status: No MCP servers detected, proceeding with built-in tools
+- .NET version: 10.0.103 installed, compatible SDKs: 9.0.303, 10.0.103, runtimes confirmed
+- Avalonia templates: 11.3.12 installed, avalonia.mvvm template available
+- Solution created: 02_inspection/InspectionPipeline.slnx
+  - InspectionPipeline.Core (classlib, net10.0)
+  - InspectionPipeline.UI (avalonia.mvvm, net10.0) 
+  - InspectionPipeline.Tests (nunit, net10.0)
+- NuGet packages installed: 
+  Core: EntityFrameworkCore 10.0.5, EntityFrameworkCore.Sqlite 10.0.5, EntityFrameworkCore.Design 10.0.5, Extensions.DependencyInjection 10.0.5, Extensions.Logging.Abstractions 10.0.5, ML.OnnxRuntime 1.24.3, OpenCvSharp4 4.13.0.20260318, OpenCvSharp4.runtime.osx.10.15-x64 4.6.0.20230105
+  UI: Extensions.DependencyInjection 10.0.5, CommunityToolkit.Mvvm 8.4.1, LiveChartsCore.SkiaSharpView.Avalonia 2.0.0-rc6.1
+  Tests: Moq 4.20.72, coverlet.collector 8.0.1, EntityFrameworkCore.InMemory 10.0.5
+- Build result: SUCCESS (0 warnings, 0 errors, elapsed 00:00:10.70)
+- Hello World: LAUNCHED (Avalonia window opened, process verified running)
+- Issues: Solution file created as .slnx format instead of .sln (handled correctly), LiveChartsCore required --prerelease flag (resolved)
