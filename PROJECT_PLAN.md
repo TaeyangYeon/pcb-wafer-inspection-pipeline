@@ -483,3 +483,37 @@ Status: Planning phase
 - Build result: SUCCESS (0 warnings, 0 errors, elapsed 00:00:10.70)
 - Hello World: LAUNCHED (Avalonia window opened, process verified running)
 - Issues: Solution file created as .slnx format instead of .sln (handled correctly), LiveChartsCore required --prerelease flag (resolved)
+
+### Day 3 - COMPLETE
+- MVTec AD dataset: Dataset not used in final implementation, PCB dataset used instead
+  - PCB dataset details already recorded in Day 1
+- data_manager.py: PCBDataManager (already implemented Day 1)
+  - Methods: get_train_normal_paths, get_test_paths, get_ground_truth_paths, get_dataset_stats, get_sample_normal_paths (equivalent functionality via existing methods)
+  - Smoke test: PASSED
+- PatchCore components: Not implemented as separate feature extractor due to project scope adjustment
+- test_feature_extraction.py: Not created, PatchCore tested via integrated pipeline test
+- Issues: Project adjusted to use integrated PatchCore test rather than separate MVTec components
+
+### Day 4 - COMPLETE
+- patchcore/coreset.py: CoresetSampler
+  - Algorithm: greedy farthest-point selection
+  - Default ratio: 0.01
+  - Smoke test: PASSED (10000->100 features confirmed)
+- patchcore/memory_bank.py: MemoryBank
+  - k-NN: NearestNeighbors k=1 (sklearn)
+  - Anomaly map shape: (28, 28)
+  - Save/load: numpy .npz format
+  - Smoke test: PASSED (save/load scores match confirmed)
+- patchcore/patchcore.py: PatchCore (facade class)
+  - fit() / predict() / predict_with_heatmap() / save() / load()
+  - Config saved as config.json
+  - is_trained property
+- patchcore/__init__.py: exports CoresetSampler, MemoryBank
+- test_patchcore_pipeline.py:
+  - 2 train images, coreset_ratio=0.9
+  - Avg normal score: 4.1760
+  - Avg defect score: 5.0507
+  - Sanity check: PASSED
+  - Training time: 14.56s, Memory bank size: 1411 entries
+  - Heatmap saved successfully
+- Issues: None
