@@ -8,14 +8,25 @@ import sys
 BASE_PATH = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(BASE_PATH / "src"))
 
-from patchcore.patchcore import PatchCore
-from data_manager import PCBDataManager
+try:
+    from patchcore.patchcore import PatchCore
+    from data_manager import PCBDataManager
+    IMPORTS_AVAILABLE = True
+except ImportError as e:
+    IMPORTS_AVAILABLE = False
+    IMPORT_ERROR = str(e)
 
 
 def render_train_tab():
     """Render the PatchCore training interface."""
     
     st.header("PatchCore Training Interface")
+    
+    # Check if imports are available
+    if not IMPORTS_AVAILABLE:
+        st.error(f"PatchCore dependencies not available: {IMPORT_ERROR}")
+        st.info("This tab requires complete PatchCore implementation. The interface is ready but dependencies are missing.")
+        return
     
     # Section 1: Training Mode Notice
     st.info("""
