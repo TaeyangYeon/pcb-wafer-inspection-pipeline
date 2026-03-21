@@ -445,6 +445,10 @@
               "target": "Package",
               "version": "[2.0.0-rc6.1, )"
             },
+            "Microsoft.EntityFrameworkCore.Design": {
+              "target": "Package",
+              "version": "[10.0.5, )"
+            },
             "Microsoft.Extensions.DependencyInjection": {
               "target": "Package",
               "version": "[10.0.5, )"

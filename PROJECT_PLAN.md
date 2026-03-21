@@ -657,28 +657,49 @@ Status: Planning phase
 - Issues: None
 
 ### Day 7 - COMPLETE
-- notebooks/train_yolov8_seg.ipynb:
-  - Cells: 24 (valid JSON confirmed)
-  - Colab metadata: T4 GPU, opset=21 ONNX export
-  - Key cells: Drive mount, repo clone, Drive dataset loader,
-    yaml override, train (100 epochs), eval, ONNX export opset=21, Drive save
-  - Resume training cell included for session disconnects
-  - Download instructions with local integration guide
-- scripts/prepare_colab_upload.py:
-  - Zip created: outputs/pcb_seg_dataset.zip
-  - Original size: 1137.6 MB, Zip size: 1127.7 MB (0.9% compression)
-  - Files: 21,337 (images + labels + dataset.yaml)
-  - Alternative Drive loading cell added to notebook
-- .gitignore issue fixed:
-  - dataset.yaml was excluded by data/ rule
-  - Modified to exclude only data files, allow yaml configs
-  - dataset.yaml committed and pushed to GitHub (HTTP 200 verified)
-- 02_inspection/models/ structure created:
-  - models/pcb_seg/README.md (YOLOv8-seg ONNX placement)
-  - models/patchcore/transistor/README.md (memory_bank.npz + config.json)
-  - models/patchcore/grid/README.md (memory_bank.npz + config.json)
-  - models/README.md (overall structure documentation)
-- Colab training: READY (notebook uploaded, dataset prepared)
-  - Training status: pending user execution in Google Colab
-  - Expected: mAP50 mask >0.70, model size ~6-12 MB
+- notebooks/train_yolov8_seg.ipynb: 13 cells, JSON valid
+- scripts/prepare_colab_upload.py: pcb_seg_dataset.zip created
+- 02_inspection/models/ structure: pcb_seg/ + patchcore/transistor/ + patchcore/grid/
+- Colab training (yolov8n_seg_pcb_small3, 1200 images, 100 epochs):
+  Box  mAP50=0.9609  mAP50-95=0.5167
+  Mask mAP50=0.9147  mAP50-95=0.3741
+  Per-class Mask mAP50:
+    missing_hole=0.969, mouse_bite=0.905, open_circuit=0.887
+    short=0.924, spur=0.865, spurious_copper=0.939
+  Speed: 5.0ms inference per image (T4 GPU)
+  Model size: 6.5 MB
+- ONNX export: opset=21, saved to Drive + downloaded locally
+- Local path: 02_inspection/models/pcb_seg/best.onnx
+- Issues:
+  1. dataset.yaml missing from GitHub (data/ in .gitignore)
+     Fix: added !data/**/*.yaml to .gitignore, committed and pushed
+  2. Colab path duplication after git clone + cd
+     Fix: os.chdir('/content/pcb-wafer-inspection-pipeline') explicitly
+  3. Full dataset training too slow (8532 imgs, ~8hrs on T4)
+     Fix: sampled 200 imgs/class = 1200 total, ~40min training
+  4. Session disconnected during evaluation
+     Fix: remount Drive, copy model to /content/, use absolute paths
+  5. metrics.seg.map50_class AttributeError
+     Fix: use metrics.seg.ap50 (correct attribute name)
+
+### Day 8 - COMPLETE
+- InspectionPipeline.Core/Interfaces/ (5 files):
+  - IFileWatcherService.cs: Start/Stop/IsRunning + ImageDetected event
+  - IInspectionApiClient.cs: InspectAsync + IsServerHealthyAsync
+  - IInspectionRepository.cs: SaveRecordAsync, GetRecordsAsync,
+    GetStatsAsync, GetAnomalyScoresAsync, ExportToCsvAsync
+  - IDriftMonitor.cs: AnalyzeAsync, SetBaseline, HasBaseline
+  - IAlarmService.cs: CheckAndTrigger, IsAlarming, Reset + AlarmTriggered event
+- InspectionPipeline.Core/Models/ (9 files):
+  - Entities: InspectionRecord, DefectDetail, ModelVersion (EF Core annotations)
+  - Models: AnomalyResult, SegmentationResult, PipelineResult,
+            DriftReport, AlarmEvent, SessionStats
+- InspectionPipeline.Core/Data/InspectionDbContext.cs:
+  - DbSet: InspectionRecords, DefectDetails, ModelVersions
+  - Fluent API: indexes on Timestamp, FinalResult, ModelName
+  - Cascade delete: DefectDetail on InspectionRecord delete
+- EF Core migration: InitialCreate
+  - Tables: InspectionRecords, DefectDetails, ModelVersions
+  - Location: InspectionPipeline.Core/Data/Migrations/
+- Build: SUCCESS (0 errors, 0 warnings)
 - Issues: None
