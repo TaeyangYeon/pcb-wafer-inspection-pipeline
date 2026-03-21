@@ -607,3 +607,52 @@ Status: Planning phase
   - data_tab.py: already had proper conditional import handling
   - monitor_tab.py: no fixes needed (no PatchCore dependencies)
 - Final status: All tabs ready for production, awaiting PatchCore feature_extractor completion
+
+### Day 5 - COMPLETE
+- app/pages/eval_tab.py:
+  - Score distribution histogram (plotly, normal vs defect overlay)
+  - ROC curve + AUROC score display
+  - Threshold slider + live confusion matrix (TP/FP/FN/TN)
+  - Sample prediction viewer (image + heatmap + PASS/FAIL badge)
+  - import OK
+- app/pages/export_tab.py:
+  - Model package export (memory_bank.npz + config.json + export_info.json)
+  - Threshold config from session_state with manual override
+  - Local inference speed benchmark
+  - Design: no ONNX for PatchCore (FastAPI server handles inference)
+  - import OK
+- app/pages/monitor_tab.py:
+  - KS-test via scipy.stats.ks_2samp
+  - Demo mode with synthetic data (no real inference log needed)
+  - Score trend chart (plotly rolling average)
+  - Retraining badge: green/yellow/red by p-value threshold
+  - import OK
+- All 5 tabs: import OK, HTTP 200 confirmed
+- Program 1 status: FEATURE COMPLETE
+- Issues: None
+
+### Day 6 - COMPLETE
+- XML annotation format: Pascal VOC
+- Has polygon data: NO
+- Conversion strategy: bbox-as-polygon (4-point, converted from Pascal VOC XML)
+- scripts/convert_to_yolo_seg.py:
+  - Input: data/raw/pcb/ (XML Pascal VOC)
+  - Output: data/processed/pcb_seg/ (YOLO-seg polygon format)
+  - Stratified 80/20 split, seed=42
+  - Conversion summary:
+    missing_hole: 2869 train, 743 val
+    mouse_bite: 2941 train, 743 val
+    open_circuit: 2854 train, 694 val
+    short: 2822 train, 686 val
+    spur: 2950 train, 686 val
+    spurious_copper: 2930 train, 746 val
+  - Total: 17366 train, 4298 val (21664 objects)
+- data/processed/pcb_seg/dataset.yaml: created
+  - nc=6, 6 class names, relative path
+  - Colab path override documented in comments
+- scripts/verify_yolo_seg.py:
+  - Format check: PASS (all classes)
+  - Coord range check: PASS (all coordinates 0.0-1.0)
+  - Verification images: outputs/verify_seg/ (12 images, 2 per class)
+  - Overall: PASS
+- Issues: None
