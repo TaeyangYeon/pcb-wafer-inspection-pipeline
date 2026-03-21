@@ -1,0 +1,24 @@
+# PCB Defect Detection - YOLOv8-seg Training Dataset
+# Classes: 6 PCB defect types
+#
+# LOCAL TRAINING (from project root):
+#   path: 01_training/data/processed/pcb_seg
+#
+# COLAB TRAINING - override path before training:
+#   path: /content/pcb-wafer-inspection-pipeline/01_training/data/processed/pcb_seg
+#
+# Annotation format: bbox-as-polygon (4-point, converted from Pascal VOC XML)
+# Original dataset: PCB Defect Dataset, Peking University
+
+path: 01_training/data/processed/pcb_seg
+train: images/train
+val: images/val
+
+nc: 6
+names:
+  0: missing_hole
+  1: mouse_bite
+  2: open_circuit
+  3: short
+  4: spur
+  5: spurious_copper

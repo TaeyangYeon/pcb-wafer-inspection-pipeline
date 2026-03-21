@@ -45,7 +45,11 @@ env/
 
 # Dataset files (too large for GitHub)
 01_training/data/raw/
-01_training/data/processed/
+01_training/data/processed/*/images/
+01_training/data/processed/*/labels/
+01_training/data/processed/**/*.jpg
+01_training/data/processed/**/*.png
+01_training/data/processed/**/*.txt
 *.zip
 *.tar.gz
 *.tar.bz2
