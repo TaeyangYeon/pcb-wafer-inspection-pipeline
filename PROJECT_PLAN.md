@@ -112,8 +112,8 @@ This mirrors real-world inspection logic: fast anomaly filter first, detailed cl
 |        v                                                 |
 |  [FastAPI Inference Server - Python]                     |
 |   PatchCore inference (Python, memory bank lookup)       |
-|   YOLOv8-seg inference (ONNX Runtime)                   |
-|   Endpoint: POST /inspect                               |
+|   YOLOv8-seg inference (ONNX Runtime)                    |
+|   Endpoint: POST /inspect                                |
 |        |                                                 |
 |        v                                                 |
 |  [C# Inspection Client]                                  |
