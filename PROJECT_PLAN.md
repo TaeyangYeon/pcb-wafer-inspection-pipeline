@@ -753,3 +753,27 @@ Status: Planning phase
   - Cumulative total: 21 tests, all PASS
 - Build: 0 errors, 0 warnings
 - Issues: None
+
+### Day 11 - COMPLETE
+- 01_training/server/ structure:
+  - config.py: model paths, thresholds, PORT=8502
+  - models.py: Pydantic schemas (InspectRequest, InspectResponse,
+               DetectionItem, HealthResponse)
+  - main.py: FastAPI app, lifespan model loading, CORS
+  - inference/patchcore_runner.py: PatchCoreRunner
+  - inference/yolo_runner.py: YoloSegRunner (Ultralytics YOLO)
+  - inference/pipeline_runner.py: PipelineRunner (2-stage logic)
+- Routes: ['/openapi.json', '/docs', '/docs/oauth2-redirect', '/redoc', '/health', '/inspect', '/']
+- /health test: schema correct YES
+- /inspect test (mode=segment): schema correct YES
+- /inspect test (mode=pipeline): schema correct YES
+- /inspect test (mode=anomaly): schema correct YES
+- 2-stage pipeline logic:
+  Stage 1: PatchCore score < threshold -> OK (StageUsed=Anomaly)
+  Stage 1: score >= threshold -> Stage 2
+  Stage 2: detections found -> NG (StageUsed=Pipeline)
+  Stage 2: no detections -> ANOMALY (StageUsed=Pipeline)
+- Server validation: uvicorn starts successfully on port 8502
+- All HTTP responses: 200 OK with valid JSON schema
+- Graceful degradation: mock responses when models not loaded
+- Issues: PatchCore feature_extractor missing (expected), YOLO ONNX not found (expected)
