@@ -31,6 +31,11 @@ public class AnomalyResult
     public string? HeatmapPath { get; set; }
 
     /// <summary>
+    /// Raw anomaly map as float array (28x28 = 784 values, normalized 0.0-1.0).
+    /// </summary>
+    public float[]? AnomalyMap { get; set; }
+
+    /// <summary>
     /// Time taken for anomaly detection in milliseconds.
     /// </summary>
     public required double InferenceTimeMs { get; set; }

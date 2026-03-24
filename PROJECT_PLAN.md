@@ -703,3 +703,53 @@ Status: Planning phase
   - Location: InspectionPipeline.Core/Data/Migrations/
 - Build: SUCCESS (0 errors, 0 warnings)
 - Issues: None
+
+### Day 9 - COMPLETE
+- InspectionPipeline.Core/Services/:
+  - InspectionRepository.cs: full EF Core CRUD impl
+    SaveRecordAsync (includes DefectDetails), GetRecordsAsync (date+result filter),
+    GetStatsAsync (aggregation on empty DB returns zeros),
+    GetAnomalyScoresAsync (last N desc), ExportToCsvAsync (manual CSV format)
+  - InspectionApiClient.cs: HttpClient wrapper
+    POST /inspect (snake_case JSON via System.Text.Json),
+    GET /health, 30s timeout, InspectionApiException on error
+  - Exceptions/InspectionApiException.cs: custom exception class
+  - FileWatcherService.cs: FileSystemWatcher + IDisposable
+    500ms debounce via Task.Delay, HashSet dedup for macOS multi-fire
+  - DriftMonitor.cs: stub (NotImplementedException)
+  - AlarmService.cs: stub (NotImplementedException)
+- DI: ServiceCollectionExtensions.AddInspectionPipelineServices()
+  SQLite: ApplicationData/pcb-wafer-inspection/inspection.db
+  HttpClient timeout: 30s
+- Tests:
+  - InspectionRepositoryTests: 8 tests, all PASS
+  - InspectionApiClientTests: 7 tests, all PASS
+  - Cumulative total: 16 tests, all PASS (includes UnitTest1)
+- Build: 0 errors, 0 warnings
+- Issues: None
+
+### Day 10 - COMPLETE
+- DriftMonitor.cs: full KS-test implementation (pure C# math)
+  Algorithm: empirical CDF comparison, max absolute difference
+  p-value: 2 * exp(-2 * effectiveN * D^2)
+  Status thresholds: p>=0.1 None / 0.05<=p<0.1 Minor / 0.01<=p<0.05 Moderate / p<0.01 Significant
+  Edge cases: empty list, < 10 samples, identical distributions
+  Thread-safe baseline management with lock
+- AlarmService.cs: event-driven alarm system
+  Severity: Warning (Moderate drift) / Critical (Significant drift)
+  IsAlarming: set on trigger, cleared only by Reset()
+  ThreadPool async event firing with exception safety
+- AnomalyResult.cs: added AnomalyMap field (float[])
+- IImageOverlayRenderer.cs + ImageOverlayRenderer.cs:
+  RenderSegmentation: bbox + label per detection, 6 PCB class colors
+  RenderAnomalyHeatmap: float[28,28] -> COLORMAP_JET -> blend 40% opacity
+  RenderCombined: heatmap + segmentation combined
+  OpenCvSharp4: Mat.FromPixelData, proper memory management
+  Registered in DI as Singleton
+- ServiceCollectionExtensions: updated with all new services
+- Tests:
+  - DriftMonitorTests: 10 tests, all PASS
+  - AlarmServiceTests: 10 tests, all PASS
+  - Cumulative total: 21 tests, all PASS
+- Build: 0 errors, 0 warnings
+- Issues: None

@@ -2,8 +2,11 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core;
 using Avalonia.Data.Core.Plugins;
+using System;
 using System.Linq;
 using Avalonia.Markup.Xaml;
+using Microsoft.Extensions.DependencyInjection;
+using InspectionPipeline.UI.DependencyInjection;
 using InspectionPipeline.UI.ViewModels;
 using InspectionPipeline.UI.Views;
 
@@ -11,9 +14,12 @@ namespace InspectionPipeline.UI;
 
 public partial class App : Application
 {
+    public IServiceProvider? ServiceProvider { get; private set; }
+
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
+        ConfigureServices();
     }
 
     public override void OnFrameworkInitializationCompleted()
@@ -30,6 +36,16 @@ public partial class App : Application
         }
 
         base.OnFrameworkInitializationCompleted();
+    }
+
+    private void ConfigureServices()
+    {
+        var services = new ServiceCollection();
+        
+        // Register inspection pipeline services
+        services.AddInspectionPipelineServices("http://localhost:8502");
+
+        ServiceProvider = services.BuildServiceProvider();
     }
 
     private void DisableAvaloniaDataAnnotationValidation()
