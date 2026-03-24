@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("InspectionPipeline.UI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+53eb1556923d994b6a2b0a9fba78817554780dab")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+045731f4b4792af8ddba89ddf290978f675e8c07")]
 [assembly: System.Reflection.AssemblyProductAttribute("InspectionPipeline.UI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("InspectionPipeline.UI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

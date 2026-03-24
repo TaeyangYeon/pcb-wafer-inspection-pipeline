@@ -1,0 +1,233 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:InspectionPipeline.UI.ViewModels"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="700"
+             x:Class="InspectionPipeline.UI.Views.DashboardView"
+             x:DataType="vm:DashboardViewModel"
+             Background="{StaticResource Background}">
+
+    <Design.DataContext>
+        <vm:DashboardViewModel/>
+    </Design.DataContext>
+
+    <ScrollViewer>
+        <StackPanel Margin="24,16">
+            
+            <!-- Alarm Banner -->
+            <Border IsVisible="{Binding IsAlarming}"
+                    Background="{StaticResource RedNG}"
+                    CornerRadius="8"
+                    Padding="16,12"
+                    Margin="0,0,0,24">
+                <Grid ColumnDefinitions="*,Auto">
+                    <TextBlock Grid.Column="0"
+                               Text="{Binding AlarmMessage}"
+                               FontWeight="SemiBold"
+                               FontSize="14"
+                               Foreground="White"
+                               VerticalAlignment="Center"/>
+                    <Button Grid.Column="1"
+                            Content="Dismiss"
+                            Command="{Binding DismissAlarmCommand}"
+                            Background="Transparent"
+                            BorderBrush="White"
+                            BorderThickness="1"
+                            Foreground="White"
+                            Padding="12,6"/>
+                </Grid>
+            </Border>
+
+            <!-- Key Metrics Row -->
+            <TextBlock Text="Dashboard Overview"
+                       FontSize="24"
+                       FontWeight="SemiBold"
+                       Foreground="{StaticResource TextPrimary}"
+                       Margin="0,0,0,16"/>
+
+            <Grid ColumnDefinitions="*,16,*,16,*,16,*" Margin="0,0,0,32">
+                
+                <!-- Total Inspections -->
+                <Border Grid.Column="0"
+                        Background="{StaticResource Surface}"
+                        BorderBrush="{StaticResource Overlay}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="20,16">
+                    <StackPanel>
+                        <TextBlock Text="Total Inspections"
+                                   FontSize="14"
+                                   Foreground="{StaticResource TextPrimary}"
+                                   Opacity="0.8"
+                                   Margin="0,0,0,8"/>
+                        <TextBlock Text="{Binding TotalCount}"
+                                   FontSize="28"
+                                   FontWeight="Bold"
+                                   Foreground="{StaticResource TextPrimary}"/>
+                        <TextBlock Text="Today"
+                                   FontSize="12"
+                                   Foreground="{StaticResource TextPrimary}"
+                                   Opacity="0.6"
+                                   Margin="0,4,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- NG Rate -->
+                <Border Grid.Column="2"
+                        Background="{StaticResource Surface}"
+                        BorderBrush="{StaticResource Overlay}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="20,16">
+                    <StackPanel>
+                        <TextBlock Text="NG Rate"
+                                   FontSize="14"
+                                   Foreground="{StaticResource TextPrimary}"
+                                   Opacity="0.8"
+                                   Margin="0,0,0,8"/>
+                        <TextBlock FontSize="28"
+                                   FontWeight="Bold"
+                                   Foreground="{StaticResource RedNG}">
+                            <TextBlock.Text>
+                                <MultiBinding StringFormat="{}{0:F1}%">
+                                    <Binding Path="NgRate"/>
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
+                        <TextBlock Text="Defect + Anomaly"
+                                   FontSize="12"
+                                   Foreground="{StaticResource TextPrimary}"
+                                   Opacity="0.6"
+                                   Margin="0,4,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Average Inference Time -->
+                <Border Grid.Column="4"
+                        Background="{StaticResource Surface}"
+                        BorderBrush="{StaticResource Overlay}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="20,16">
+                    <StackPanel>
+                        <TextBlock Text="Avg Inference Time"
+                                   FontSize="14"
+                                   Foreground="{StaticResource TextPrimary}"
+                                   Opacity="0.8"
+                                   Margin="0,0,0,8"/>
+                        <TextBlock FontSize="28"
+                                   FontWeight="Bold"
+                                   Foreground="{StaticResource BlueAccent}">
+                            <TextBlock.Text>
+                                <MultiBinding StringFormat="{}{0:F0}">
+                                    <Binding Path="AvgInferenceMs"/>
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
+                        <TextBlock Text="milliseconds"
+                                   FontSize="12"
+                                   Foreground="{StaticResource TextPrimary}"
+                                   Opacity="0.6"
+                                   Margin="0,4,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Average Anomaly Score -->
+                <Border Grid.Column="6"
+                        Background="{StaticResource Surface}"
+                        BorderBrush="{StaticResource Overlay}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="20,16">
+                    <StackPanel>
+                        <TextBlock Text="Avg Anomaly Score"
+                                   FontSize="14"
+                                   Foreground="{StaticResource TextPrimary}"
+                                   Opacity="0.8"
+                                   Margin="0,0,0,8"/>
+                        <TextBlock FontSize="28"
+                                   FontWeight="Bold"
+                                   Foreground="{StaticResource YellowWarn}">
+                            <TextBlock.Text>
+                                <MultiBinding StringFormat="{}{0:F3}">
+                                    <Binding Path="AvgAnomalyScore"/>
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
+                        <TextBlock Text="0.0 - 1.0 scale"
+                                   FontSize="12"
+                                   Foreground="{StaticResource TextPrimary}"
+                                   Opacity="0.6"
+                                   Margin="0,4,0,0"/>
+                    </StackPanel>
+                </Border>
+
+            </Grid>
+
+            <!-- Recent Inspections Section -->
+            <TextBlock Text="Recent Inspections (Last 24 Hours)"
+                       FontSize="18"
+                       FontWeight="SemiBold"
+                       Foreground="{StaticResource TextPrimary}"
+                       Margin="0,0,0,16"/>
+
+            <Border Background="{StaticResource Surface}"
+                    BorderBrush="{StaticResource Overlay}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="0">
+                
+                <DataGrid ItemsSource="{Binding RecentRecords}"
+                          Background="Transparent"
+                          GridLinesVisibility="Horizontal"
+                          HeadersVisibility="Column"
+                          IsReadOnly="True"
+                          AutoGenerateColumns="False"
+                          CanUserReorderColumns="False"
+                          CanUserResizeColumns="True"
+                          CanUserSortColumns="True">
+                    
+                    <DataGrid.Columns>
+                        
+                        <DataGridTextColumn Header="Timestamp" 
+                                            Binding="{Binding Timestamp, StringFormat='MM/dd HH:mm:ss'}"
+                                            Width="120"/>
+                        
+                        <DataGridTextColumn Header="Image" 
+                                            Binding="{Binding ImagePath}"
+                                            Width="180"/>
+                        
+                        <DataGridTemplateColumn Header="Result" Width="100">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Border CornerRadius="4" Padding="8,4" Margin="4"
+                                            Background="{Binding FinalResult, FallbackValue={StaticResource Overlay}}">
+                                        <TextBlock Text="{Binding FinalResult}"
+                                                   Foreground="White"
+                                                   FontWeight="SemiBold"
+                                                   FontSize="12"
+                                                   HorizontalAlignment="Center"/>
+                                    </Border>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        
+                        <DataGridTextColumn Header="Anomaly Score" 
+                                            Binding="{Binding AnomalyScore, StringFormat='F3'}"
+                                            Width="110"/>
+                        
+                        <DataGridTextColumn Header="Inference (ms)" 
+                                            Binding="{Binding InferenceTimeMs, StringFormat='F0'}"
+                                            Width="120"/>
+                        
+                    </DataGrid.Columns>
+                    
+                </DataGrid>
+                
+            </Border>
+
+        </StackPanel>
+    </ScrollViewer>
+
+</UserControl>

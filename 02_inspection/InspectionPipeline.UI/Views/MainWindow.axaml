@@ -3,18 +3,120 @@
         xmlns:vm="using:InspectionPipeline.UI.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
         x:Class="InspectionPipeline.UI.Views.MainWindow"
-        x:DataType="vm:MainWindowViewModel"
-        Icon="/Assets/avalonia-logo.ico"
-        Title="InspectionPipeline.UI">
+        x:DataType="vm:MainViewModel"
+        Title="PCB Wafer Inspection Pipeline"
+        Background="{StaticResource Background}">
 
     <Design.DataContext>
-        <!-- This only sets the DataContext for the previewer in an IDE,
-             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
-        <vm:MainWindowViewModel/>
+        <vm:MainViewModel/>
     </Design.DataContext>
 
-    <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+    <Grid ColumnDefinitions="200,*">
+        
+        <!-- Left Navigation Panel -->
+        <Border Grid.Column="0" 
+                Background="{StaticResource Surface}"
+                BorderBrush="{StaticResource Overlay}"
+                BorderThickness="0,0,1,0">
+            
+            <StackPanel>
+                <!-- App Title -->
+                <Border Background="{StaticResource Overlay}" 
+                        Padding="16,24"
+                        Margin="0,0,0,8">
+                    <TextBlock Text="Inspection Pipeline"
+                               FontSize="16"
+                               FontWeight="SemiBold"
+                               Foreground="{StaticResource TextPrimary}"
+                               HorizontalAlignment="Center"/>
+                </Border>
+
+                <!-- Navigation Buttons -->
+                <StackPanel Margin="8,0">
+                    
+                    <Button Content="Dashboard"
+                            Classes="NavigationButton"
+                            Command="{Binding NavigateCommand}"
+                            CommandParameter="Dashboard"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Padding="16,12"
+                            Margin="0,2"
+                            Foreground="{StaticResource TextPrimary}"
+                            HorizontalContentAlignment="Left"/>
+                    
+                    <Button Content="Inspection"
+                            Classes="NavigationButton"
+                            Command="{Binding NavigateCommand}"
+                            CommandParameter="Inspection"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Padding="16,12"
+                            Margin="0,2"
+                            Foreground="{StaticResource TextPrimary}"
+                            HorizontalContentAlignment="Left"/>
+                    
+                    <Button Content="History"
+                            Classes="NavigationButton"
+                            Command="{Binding NavigateCommand}"
+                            CommandParameter="History"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Padding="16,12"
+                            Margin="0,2"
+                            Foreground="{StaticResource TextPrimary}"
+                            HorizontalContentAlignment="Left"/>
+                    
+                    <Button Content="Monitor"
+                            Classes="NavigationButton"
+                            Command="{Binding NavigateCommand}"
+                            CommandParameter="Monitor"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Padding="16,12"
+                            Margin="0,2"
+                            Foreground="{StaticResource TextPrimary}"
+                            HorizontalContentAlignment="Left"/>
+                    
+                    <Button Content="Settings"
+                            Classes="NavigationButton"
+                            Command="{Binding NavigateCommand}"
+                            CommandParameter="Settings"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Padding="16,12"
+                            Margin="0,2"
+                            Foreground="{StaticResource TextPrimary}"
+                            HorizontalContentAlignment="Left"/>
+                    
+                </StackPanel>
+
+                <!-- Bottom Status -->
+                <Border Background="{StaticResource Overlay}"
+                        Margin="8,24,8,8"
+                        Padding="12,8"
+                        CornerRadius="4">
+                    <StackPanel Orientation="Horizontal">
+                        <Ellipse Width="8" Height="8" 
+                                 Fill="{Binding IsApiConnected, FallbackValue={StaticResource RedNG}}"
+                                 VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding StatusMessage}"
+                                   FontSize="12"
+                                   Foreground="{StaticResource TextPrimary}"
+                                   Margin="8,0,0,0"
+                                   VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </Border>
+
+        <!-- Main Content Area -->
+        <ContentControl Grid.Column="1"
+                        Content="{Binding CurrentPage}"
+                        Background="{StaticResource Background}"/>
+
+    </Grid>
 
 </Window>

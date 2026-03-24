@@ -1,0 +1,273 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:InspectionPipeline.UI.ViewModels"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
+             x:Class="InspectionPipeline.UI.Views.InspectionView"
+             x:DataType="vm:InspectionViewModel"
+             Background="{StaticResource Background}">
+
+    <Design.DataContext>
+        <vm:InspectionViewModel/>
+    </Design.DataContext>
+
+    <Grid ColumnDefinitions="2*,24,*" Margin="24,16">
+
+        <!-- Left Column: Images -->
+        <StackPanel Grid.Column="0">
+            
+            <TextBlock Text="Manual Inspection"
+                       FontSize="24"
+                       FontWeight="SemiBold"
+                       Foreground="{StaticResource TextPrimary}"
+                       Margin="0,0,0,16"/>
+
+            <!-- Control Buttons -->
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,16" Spacing="12">
+                <Button Content="Open Image"
+                        Command="{Binding OpenImageCommand}"
+                        Background="{StaticResource BlueAccent}"
+                        Foreground="White"
+                        Padding="16,8"
+                        CornerRadius="4"/>
+                <Button Content="Run Inspection"
+                        Command="{Binding RunInspectionCommand}"
+                        IsEnabled="{Binding !IsRunning}"
+                        Background="{StaticResource GreenOK}"
+                        Foreground="White"
+                        Padding="16,8"
+                        CornerRadius="4"/>
+                <Button Content="Cancel"
+                        Command="{Binding CancelCommand}"
+                        IsVisible="{Binding IsRunning}"
+                        Background="{StaticResource RedNG}"
+                        Foreground="White"
+                        Padding="16,8"
+                        CornerRadius="4"/>
+            </StackPanel>
+
+            <!-- Status Message -->
+            <TextBlock Text="{Binding StatusMessage}"
+                       FontSize="14"
+                       Foreground="{StaticResource TextPrimary}"
+                       Margin="0,0,0,16"/>
+
+            <!-- Image Display Area -->
+            <Grid RowDefinitions="*,16,*">
+                
+                <!-- Original Image -->
+                <Border Grid.Row="0"
+                        Background="{StaticResource Surface}"
+                        BorderBrush="{StaticResource Overlay}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="16">
+                    <StackPanel>
+                        <TextBlock Text="Original Image"
+                                   FontWeight="SemiBold"
+                                   Foreground="{StaticResource TextPrimary}"
+                                   Margin="0,0,0,12"/>
+                        <Border Background="{StaticResource Background}"
+                                BorderBrush="{StaticResource Overlay}"
+                                BorderThickness="1"
+                                CornerRadius="4"
+                                MinHeight="300">
+                            <Image Source="{Binding OriginalImageBitmap}"
+                                   Stretch="Uniform"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"/>
+                        </Border>
+                    </StackPanel>
+                </Border>
+
+                <!-- Result Image -->
+                <Border Grid.Row="2"
+                        Background="{StaticResource Surface}"
+                        BorderBrush="{StaticResource Overlay}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="16">
+                    <StackPanel>
+                        <TextBlock Text="Result with Overlay"
+                                   FontWeight="SemiBold"
+                                   Foreground="{StaticResource TextPrimary}"
+                                   Margin="0,0,0,12"/>
+                        <Border Background="{StaticResource Background}"
+                                BorderBrush="{StaticResource Overlay}"
+                                BorderThickness="1"
+                                CornerRadius="4"
+                                MinHeight="300">
+                            <Image Source="{Binding ResultImageBitmap}"
+                                   Stretch="Uniform"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"/>
+                        </Border>
+                    </StackPanel>
+                </Border>
+
+            </Grid>
+
+        </StackPanel>
+
+        <!-- Right Column: Results Panel -->
+        <ScrollViewer Grid.Column="2">
+            <StackPanel>
+
+                <TextBlock Text="Inspection Results"
+                           FontSize="18"
+                           FontWeight="SemiBold"
+                           Foreground="{StaticResource TextPrimary}"
+                           Margin="0,0,0,16"/>
+
+                <!-- Final Result Badge -->
+                <Border Background="{StaticResource Surface}"
+                        BorderBrush="{StaticResource Overlay}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="16"
+                        Margin="0,0,0,16">
+                    <StackPanel>
+                        <TextBlock Text="Final Result"
+                                   FontSize="14"
+                                   Foreground="{StaticResource TextPrimary}"
+                                   Opacity="0.8"
+                                   Margin="0,0,0,8"/>
+                        <Border CornerRadius="4" 
+                                Padding="12,6" 
+                                HorizontalAlignment="Left"
+                                Background="{Binding FinalResult, FallbackValue={StaticResource Overlay}}">
+                            <TextBlock Text="{Binding FinalResult, FallbackValue='No Result'}"
+                                       FontWeight="SemiBold"
+                                       FontSize="16"
+                                       Foreground="White"/>
+                        </Border>
+                    </StackPanel>
+                </Border>
+
+                <!-- Metrics -->
+                <Border Background="{StaticResource Surface}"
+                        BorderBrush="{StaticResource Overlay}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="16"
+                        Margin="0,0,0,16">
+                    <StackPanel Spacing="12">
+                        
+                        <!-- Stage Used -->
+                        <StackPanel>
+                            <TextBlock Text="Decision Stage"
+                                       FontSize="12"
+                                       Foreground="{StaticResource TextPrimary}"
+                                       Opacity="0.7"
+                                       Margin="0,0,0,4"/>
+                            <TextBlock Text="{Binding StageUsed, FallbackValue='-'}"
+                                       FontSize="14"
+                                       FontWeight="SemiBold"
+                                       Foreground="{StaticResource TextPrimary}"/>
+                        </StackPanel>
+
+                        <!-- Anomaly Score -->
+                        <StackPanel>
+                            <TextBlock Text="Anomaly Score"
+                                       FontSize="12"
+                                       Foreground="{StaticResource TextPrimary}"
+                                       Opacity="0.7"
+                                       Margin="0,0,0,4"/>
+                            <TextBlock FontSize="14"
+                                       FontWeight="SemiBold"
+                                       Foreground="{StaticResource YellowWarn}">
+                                <TextBlock.Text>
+                                    <MultiBinding StringFormat="{}{0:F3}">
+                                        <Binding Path="AnomalyScore"/>
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
+                        </StackPanel>
+
+                        <!-- Inference Time -->
+                        <StackPanel>
+                            <TextBlock Text="Inference Time"
+                                       FontSize="12"
+                                       Foreground="{StaticResource TextPrimary}"
+                                       Opacity="0.7"
+                                       Margin="0,0,0,4"/>
+                            <TextBlock FontSize="14"
+                                       FontWeight="SemiBold"
+                                       Foreground="{StaticResource BlueAccent}">
+                                <TextBlock.Text>
+                                    <MultiBinding StringFormat="{}{0:F0} ms">
+                                        <Binding Path="InferenceTimeMs"/>
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
+                        </StackPanel>
+
+                    </StackPanel>
+                </Border>
+
+                <!-- Detection List -->
+                <Border Background="{StaticResource Surface}"
+                        BorderBrush="{StaticResource Overlay}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="16">
+                    <StackPanel>
+                        <TextBlock Text="Detected Defects"
+                                   FontSize="14"
+                                   FontWeight="SemiBold"
+                                   Foreground="{StaticResource TextPrimary}"
+                                   Margin="0,0,0,12"/>
+
+                        <ItemsControl ItemsSource="{Binding Detections}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="{StaticResource Background}"
+                                            BorderBrush="{StaticResource Overlay}"
+                                            BorderThickness="1"
+                                            CornerRadius="4"
+                                            Padding="12"
+                                            Margin="0,0,0,8">
+                                        <StackPanel Spacing="4">
+                                            <Grid ColumnDefinitions="*,Auto">
+                                                <TextBlock Grid.Column="0"
+                                                           Text="{Binding ClassName}"
+                                                           FontWeight="SemiBold"
+                                                           FontSize="12"
+                                                           Foreground="{StaticResource TextPrimary}"/>
+                                                <TextBlock Grid.Column="1"
+                                                           Text="{Binding Confidence, StringFormat='{}{0:P1}'}"
+                                                           FontSize="12"
+                                                           Foreground="{StaticResource GreenOK}"/>
+                                            </Grid>
+                                            <Rectangle Height="4" 
+                                                       Fill="{StaticResource GreenOK}"
+                                                       HorizontalAlignment="Left"
+                                                       Width="100"/>
+                                            <TextBlock Text="{Binding BoundingBox}"
+                                                       FontSize="10"
+                                                       Foreground="{StaticResource TextPrimary}"
+                                                       Opacity="0.7"/>
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <!-- No Detections Message -->
+                        <TextBlock Text="No defects detected"
+                                   FontSize="12"
+                                   Foreground="{StaticResource TextPrimary}"
+                                   Opacity="0.6"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,12,0,0"/>
+
+                    </StackPanel>
+                </Border>
+
+            </StackPanel>
+        </ScrollViewer>
+
+    </Grid>
+
+</UserControl>
