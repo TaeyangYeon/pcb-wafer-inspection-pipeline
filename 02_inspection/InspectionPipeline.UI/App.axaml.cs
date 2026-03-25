@@ -31,7 +31,7 @@ public partial class App : Application
             DisableAvaloniaDataAnnotationValidation();
             desktop.MainWindow = new MainWindow
             {
-                DataContext = new MainWindowViewModel(),
+                DataContext = ServiceProvider?.GetRequiredService<MainViewModel>(),
             };
         }
 
@@ -44,6 +44,14 @@ public partial class App : Application
         
         // Register inspection pipeline services
         services.AddInspectionPipelineServices("http://localhost:8502");
+        
+        // Register ViewModels
+        services.AddTransient<DashboardViewModel>();
+        services.AddTransient<InspectionViewModel>();
+        services.AddTransient<HistoryViewModel>();
+        services.AddTransient<MonitorViewModel>();
+        services.AddTransient<SettingsViewModel>();
+        services.AddSingleton<MainViewModel>();
 
         ServiceProvider = services.BuildServiceProvider();
     }

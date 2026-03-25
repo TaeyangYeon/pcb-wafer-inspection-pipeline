@@ -1,0 +1,253 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:InspectionPipeline.UI.ViewModels"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
+             x:Class="InspectionPipeline.UI.Views.HistoryView"
+             x:DataType="vm:HistoryViewModel"
+             Background="{StaticResource Background}">
+
+    <Design.DataContext>
+        <vm:HistoryViewModel/>
+    </Design.DataContext>
+
+    <Grid RowDefinitions="Auto,*,Auto,Auto" Margin="24,16">
+
+        <!-- Filter Controls Row -->
+        <Border Grid.Row="0" 
+                Background="{StaticResource Surface}"
+                BorderBrush="{StaticResource Overlay}"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="16"
+                Margin="0,0,0,16">
+            
+            <Grid ColumnDefinitions="Auto,*,Auto,*,Auto,*,Auto,Auto" RowDefinitions="Auto,Auto">
+                
+                <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="8"
+                           Text="Inspection History"
+                           FontSize="18"
+                           FontWeight="SemiBold"
+                           Foreground="{StaticResource TextPrimary}"
+                           Margin="0,0,0,16"/>
+
+                <!-- From Date -->
+                <TextBlock Grid.Row="1" Grid.Column="0"
+                           Text="From:"
+                           VerticalAlignment="Center"
+                           Foreground="{StaticResource TextPrimary}"
+                           Margin="0,0,8,0"/>
+                
+                <DatePicker Grid.Row="1" Grid.Column="1"
+                            SelectedDate="{Binding FromDate}"
+                            Margin="0,0,16,0"/>
+
+                <!-- To Date -->
+                <TextBlock Grid.Row="1" Grid.Column="2"
+                           Text="To:"
+                           VerticalAlignment="Center"
+                           Foreground="{StaticResource TextPrimary}"
+                           Margin="0,0,8,0"/>
+                
+                <DatePicker Grid.Row="1" Grid.Column="3"
+                            SelectedDate="{Binding ToDate}"
+                            Margin="0,0,16,0"/>
+
+                <!-- Result Filter -->
+                <TextBlock Grid.Row="1" Grid.Column="4"
+                           Text="Result:"
+                           VerticalAlignment="Center"
+                           Foreground="{StaticResource TextPrimary}"
+                           Margin="0,0,8,0"/>
+                
+                <ComboBox Grid.Row="1" Grid.Column="5"
+                          ItemsSource="{Binding ResultFilterOptions}"
+                          SelectedItem="{Binding ResultFilter}"
+                          Width="120"
+                          Margin="0,0,16,0"/>
+
+                <!-- Search Button -->
+                <Button Grid.Row="1" Grid.Column="6"
+                        Content="Search"
+                        Command="{Binding SearchCommand}"
+                        IsEnabled="{Binding !IsBusy}"
+                        Background="{StaticResource BlueAccent}"
+                        Foreground="White"
+                        Padding="16,8"
+                        Margin="0,0,8,0"/>
+
+                <!-- Clear Filters Button -->
+                <Button Grid.Row="1" Grid.Column="7"
+                        Content="Clear Filters"
+                        Command="{Binding ClearFiltersCommand}"
+                        IsEnabled="{Binding !IsBusy}"
+                        Background="{StaticResource Overlay}"
+                        Foreground="{StaticResource TextPrimary}"
+                        Padding="16,8"/>
+
+            </Grid>
+        </Border>
+
+        <!-- Records DataGrid -->
+        <Border Grid.Row="1"
+                Background="{StaticResource Surface}"
+                BorderBrush="{StaticResource Overlay}"
+                BorderThickness="1"
+                CornerRadius="8"
+                Margin="0,0,0,16">
+            
+            <DataGrid ItemsSource="{Binding Records}"
+                      Background="Transparent"
+                      GridLinesVisibility="Horizontal"
+                      HeadersVisibility="Column"
+                      IsReadOnly="True"
+                      AutoGenerateColumns="False"
+                      CanUserReorderColumns="False"
+                      CanUserResizeColumns="True"
+                      CanUserSortColumns="True">
+                
+                <DataGrid.Columns>
+                    
+                    <DataGridTextColumn Header="Timestamp" 
+                                        Binding="{Binding Timestamp, StringFormat='MM/dd/yyyy HH:mm:ss'}"
+                                        Width="140"/>
+                    
+                    <DataGridTextColumn Header="Image File" 
+                                        Binding="{Binding ImagePath}"
+                                        Width="180"/>
+                    
+                    <DataGridTemplateColumn Header="Result" Width="80">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Border CornerRadius="4" 
+                                        Padding="8,4" 
+                                        Margin="4"
+                                        HorizontalAlignment="Center"
+                                        Background="{Binding FinalResult, FallbackValue={StaticResource Overlay}}">
+                                    <TextBlock Text="{Binding FinalResult}"
+                                               Foreground="White"
+                                               FontWeight="SemiBold"
+                                               FontSize="10"
+                                               HorizontalAlignment="Center"/>
+                                </Border>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    
+                    <DataGridTextColumn Header="Stage Used" 
+                                        Binding="{Binding StageUsed}"
+                                        Width="100"/>
+                    
+                    <DataGridTextColumn Header="Anomaly Score" 
+                                        Binding="{Binding AnomalyScore, StringFormat='F3'}"
+                                        Width="110"/>
+                    
+                    <DataGridTextColumn Header="Inference (ms)" 
+                                        Binding="{Binding InferenceTimeMs, StringFormat='F0'}"
+                                        Width="100"/>
+                    
+                    <DataGridTextColumn Header="Defects" 
+                                        Binding="{Binding DefectDetails.Count}"
+                                        Width="80"/>
+                    
+                </DataGrid.Columns>
+                
+            </DataGrid>
+        </Border>
+
+        <!-- Summary Row -->
+        <Border Grid.Row="2"
+                Background="{StaticResource Surface}"
+                BorderBrush="{StaticResource Overlay}"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="16"
+                Margin="0,0,0,16">
+            
+            <Grid ColumnDefinitions="Auto,*,Auto,*,Auto,*,Auto,*">
+                
+                <TextBlock Grid.Column="0"
+                           FontWeight="SemiBold"
+                           Foreground="{StaticResource TextPrimary}"
+                           Margin="0,0,16,0">
+                    <Run Text="Total shown: "/>
+                    <Run Text="{Binding TotalCount}"/>
+                    <Run Text=" records"/>
+                </TextBlock>
+
+                <TextBlock Grid.Column="2"
+                           Foreground="{StaticResource GreenOK}"
+                           FontWeight="SemiBold"
+                           Margin="0,0,16,0">
+                    <Run Text="OK: "/>
+                    <Run Text="{Binding OkCount}"/>
+                </TextBlock>
+
+                <TextBlock Grid.Column="4"
+                           Foreground="{StaticResource RedNG}"
+                           FontWeight="SemiBold"
+                           Margin="0,0,16,0">
+                    <Run Text="NG: "/>
+                    <Run Text="{Binding NgCount}"/>
+                </TextBlock>
+
+                <TextBlock Grid.Column="6"
+                           Foreground="{StaticResource YellowWarn}"
+                           FontWeight="SemiBold">
+                    <Run Text="ANOMALY: "/>
+                    <Run Text="{Binding AnomalyCount}"/>
+                </TextBlock>
+                
+            </Grid>
+        </Border>
+
+        <!-- Export Controls -->
+        <Border Grid.Row="3"
+                Background="{StaticResource Surface}"
+                BorderBrush="{StaticResource Overlay}"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="16">
+            
+            <Grid ColumnDefinitions="Auto,*,Auto,Auto" RowDefinitions="Auto,Auto">
+                
+                <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4"
+                           Text="Export to CSV"
+                           FontSize="14"
+                           FontWeight="SemiBold"
+                           Foreground="{StaticResource TextPrimary}"
+                           Margin="0,0,0,12"/>
+
+                <TextBlock Grid.Row="1" Grid.Column="0"
+                           Text="Export Path:"
+                           VerticalAlignment="Center"
+                           Foreground="{StaticResource TextPrimary}"
+                           Margin="0,0,8,0"/>
+                
+                <TextBox Grid.Row="1" Grid.Column="1"
+                         Text="{Binding ExportPath}"
+                         VerticalAlignment="Center"
+                         Margin="0,0,16,0"/>
+
+                <Button Grid.Row="1" Grid.Column="2"
+                        Content="Export to CSV"
+                        Command="{Binding ExportCommand}"
+                        IsEnabled="{Binding !IsBusy}"
+                        Background="{StaticResource GreenOK}"
+                        Foreground="White"
+                        Padding="16,8"
+                        Margin="0,0,16,0"/>
+
+                <TextBlock Grid.Row="1" Grid.Column="3"
+                           Text="{Binding StatusMessage}"
+                           VerticalAlignment="Center"
+                           Foreground="{StaticResource TextPrimary}"
+                           FontSize="12"/>
+                
+            </Grid>
+        </Border>
+
+    </Grid>
+
+</UserControl>

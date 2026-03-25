@@ -58,6 +58,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IFileWatcherService, FileWatcherService>();
         services.AddSingleton<IDriftMonitor, DriftMonitor>();
         services.AddSingleton<IAlarmService, AlarmService>();
+        services.AddSingleton<ISettingsService, SettingsService>();
 
         return services;
     }

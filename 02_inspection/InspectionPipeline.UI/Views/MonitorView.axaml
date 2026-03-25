@@ -1,0 +1,242 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:InspectionPipeline.UI.ViewModels"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
+             x:Class="InspectionPipeline.UI.Views.MonitorView"
+             x:DataType="vm:MonitorViewModel"
+             Background="{StaticResource Background}">
+
+    <Design.DataContext>
+        <vm:MonitorViewModel/>
+    </Design.DataContext>
+
+    <ScrollViewer>
+        <StackPanel Margin="24,16" Spacing="24">
+
+            <!-- Page Title -->
+            <TextBlock Text="Model Drift Monitor"
+                       FontSize="24"
+                       FontWeight="SemiBold"
+                       Foreground="{StaticResource TextPrimary}"/>
+
+            <!-- Drift Status Panel -->
+            <Border Background="{StaticResource Surface}"
+                    BorderBrush="{StaticResource Overlay}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="24">
+                
+                <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto,Auto">
+                    
+                    <!-- Status Badge -->
+                    <Border Grid.Row="0" Grid.Column="0" Grid.RowSpan="3"
+                            CornerRadius="8"
+                            Padding="24,16"
+                            MinWidth="200"
+                            VerticalAlignment="Center"
+                            Margin="0,0,32,0"
+                            Background="{Binding DriftStatus, FallbackValue={StaticResource Overlay}}">
+                        <StackPanel HorizontalAlignment="Center">
+                            <TextBlock Text="{Binding DriftStatus}"
+                                       FontSize="18"
+                                       FontWeight="Bold"
+                                       Foreground="White"
+                                       HorizontalAlignment="Center"/>
+                            <TextBlock Text="DRIFT STATUS"
+                                       FontSize="10"
+                                       Foreground="White"
+                                       Opacity="0.8"
+                                       HorizontalAlignment="Center"
+                                       Margin="0,4,0,0"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- KS Statistic -->
+                    <StackPanel Grid.Row="0" Grid.Column="1" Margin="0,0,0,16">
+                        <TextBlock Text="KS Statistic"
+                                   FontSize="12"
+                                   Foreground="{StaticResource TextPrimary}"
+                                   Opacity="0.7"/>
+                        <TextBlock Text="{Binding KsStatistic, StringFormat='F4'}"
+                                   FontSize="20"
+                                   FontWeight="SemiBold"
+                                   Foreground="{StaticResource TextPrimary}"/>
+                    </StackPanel>
+
+                    <!-- P-Value -->
+                    <StackPanel Grid.Row="1" Grid.Column="1" Margin="0,0,0,16">
+                        <TextBlock Text="P-Value"
+                                   FontSize="12"
+                                   Foreground="{StaticResource TextPrimary}"
+                                   Opacity="0.7"/>
+                        <TextBlock Text="{Binding PValue, StringFormat='F6'}"
+                                   FontSize="20"
+                                   FontWeight="SemiBold"
+                                   Foreground="{StaticResource TextPrimary}"/>
+                    </StackPanel>
+
+                    <!-- Last Analyzed -->
+                    <StackPanel Grid.Row="2" Grid.Column="1">
+                        <TextBlock Text="Last Analyzed"
+                                   FontSize="12"
+                                   Foreground="{StaticResource TextPrimary}"
+                                   Opacity="0.7"/>
+                        <TextBlock Text="{Binding LastAnalyzedAt}"
+                                   FontSize="14"
+                                   Foreground="{StaticResource TextPrimary}"/>
+                    </StackPanel>
+
+                    <!-- Run Analysis Button -->
+                    <Button Grid.Row="1" Grid.Column="2"
+                            Content="Run Drift Analysis"
+                            Command="{Binding RunAnalysisCommand}"
+                            IsEnabled="{Binding !IsBusy}"
+                            Background="{StaticResource BlueAccent}"
+                            Foreground="White"
+                            Padding="20,12"
+                            CornerRadius="6"
+                            FontSize="14"
+                            FontWeight="SemiBold"/>
+                    
+                </Grid>
+            </Border>
+
+            <!-- Score Trend Chart -->
+            <Border Background="{StaticResource Surface}"
+                    BorderBrush="{StaticResource Overlay}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="24">
+                
+                <StackPanel>
+                    <TextBlock Text="Anomaly Score Trend (Last 100 Inspections)"
+                               FontSize="16"
+                               FontWeight="SemiBold"
+                               Foreground="{StaticResource TextPrimary}"
+                               Margin="0,0,0,16"/>
+                    
+                    <Border Height="300"
+                            Background="{StaticResource Overlay}"
+                            CornerRadius="4">
+                        <TextBlock Text="Chart visualization placeholder - requires LiveCharts configuration"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   FontStyle="Italic"
+                                   Foreground="{StaticResource TextPrimary}"
+                                   Opacity="0.7"/>
+                    </Border>
+                </StackPanel>
+            </Border>
+
+            <!-- Baseline Management -->
+            <Border Background="{StaticResource Surface}"
+                    BorderBrush="{StaticResource Overlay}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="24">
+                
+                <Grid ColumnDefinitions="*,Auto">
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="Baseline Management"
+                                   FontSize="16"
+                                   FontWeight="SemiBold"
+                                   Foreground="{StaticResource TextPrimary}"
+                                   Margin="0,0,0,8"/>
+                        <TextBlock Text="{Binding BaselineInfo}"
+                                   FontSize="14"
+                                   Foreground="{StaticResource TextPrimary}"
+                                   Opacity="0.8"/>
+                        <TextBlock Text="A baseline represents the normal distribution of anomaly scores"
+                                   FontSize="12"
+                                   Foreground="{StaticResource TextPrimary}"
+                                   Opacity="0.6"
+                                   Margin="0,4,0,0"/>
+                    </StackPanel>
+                    
+                    <Button Grid.Column="1"
+                            Content="Set Current as Baseline"
+                            Command="{Binding SetBaselineCommand}"
+                            IsEnabled="{Binding !IsBusy}"
+                            Background="{StaticResource GreenOK}"
+                            Foreground="White"
+                            Padding="16,10"
+                            CornerRadius="6"/>
+                </Grid>
+            </Border>
+
+            <!-- Retraining Recommendation Section -->
+            <Border Background="{StaticResource RedNG}"
+                    BorderBrush="{StaticResource RedNG}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="24"
+                    IsVisible="{Binding IsRetrainingRecommended}">
+                
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+                        <TextBlock Text="⚠"
+                                   FontSize="24"
+                                   Foreground="White"
+                                   Margin="0,0,12,0"/>
+                        <TextBlock Text="Retraining Recommended"
+                                   FontSize="18"
+                                   FontWeight="Bold"
+                                   Foreground="White"
+                                   VerticalAlignment="Center"/>
+                    </StackPanel>
+                    
+                    <TextBlock Text="Score distribution has shifted significantly. The model may no longer accurately detect anomalies."
+                               FontSize="14"
+                               Foreground="White"
+                               TextWrapping="Wrap"
+                               Margin="0,0,0,16"/>
+                    
+                    <StackPanel Orientation="Horizontal" Spacing="16">
+                        <TextBlock Text="Notebook Path:"
+                                   FontSize="12"
+                                   Foreground="White"
+                                   Opacity="0.8"
+                                   VerticalAlignment="Center"/>
+                        <Border Background="White"
+                                CornerRadius="4"
+                                Padding="12,6">
+                            <TextBlock Text="~/pcb-wafer-inspection-pipeline/01_training/PCB_Wafer_Training.ipynb"
+                                       FontSize="11"
+                                       FontFamily="Consolas"
+                                       Foreground="#1E1E2E"/>
+                        </Border>
+                    </StackPanel>
+                    
+                    <TextBlock Text="Instructions: Open the Colab notebook above to retrain the PatchCore model with recent inspection data."
+                               FontSize="12"
+                               Foreground="White"
+                               Opacity="0.9"
+                               TextWrapping="Wrap"
+                               Margin="0,12,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Status Bar -->
+            <Border Background="{StaticResource Overlay}"
+                    CornerRadius="4"
+                    Padding="16,8">
+                <Grid ColumnDefinitions="Auto,*">
+                    <TextBlock Grid.Column="0"
+                               Text="Status:"
+                               FontSize="12"
+                               Foreground="{StaticResource TextPrimary}"
+                               Opacity="0.7"
+                               Margin="0,0,8,0"/>
+                    <TextBlock Grid.Column="1"
+                               Text="{Binding StatusMessage}"
+                               FontSize="12"
+                               Foreground="{StaticResource TextPrimary}"/>
+                </Grid>
+            </Border>
+
+        </StackPanel>
+    </ScrollViewer>
+
+</UserControl>

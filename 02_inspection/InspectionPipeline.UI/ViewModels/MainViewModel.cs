@@ -1,3 +1,5 @@
+using System;
+using Microsoft.Extensions.DependencyInjection;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
@@ -5,6 +7,8 @@ namespace InspectionPipeline.UI.ViewModels;
 
 public partial class MainViewModel : ObservableObject
 {
+    private readonly IServiceProvider _serviceProvider;
+
     [ObservableProperty]
     private object? currentPage;
 
@@ -14,10 +18,12 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty]
     private string statusMessage = "Disconnected";
 
-    public MainViewModel()
+    public MainViewModel(IServiceProvider serviceProvider)
     {
-        // Initialize with placeholder - will be replaced with actual ViewModels
-        CurrentPage = "Dashboard";
+        _serviceProvider = serviceProvider;
+        
+        // Initialize with Dashboard
+        CurrentPage = _serviceProvider.GetRequiredService<DashboardViewModel>();
         IsApiConnected = false;
         StatusMessage = "API Disconnected";
     }
@@ -30,11 +36,11 @@ public partial class MainViewModel : ObservableObject
 
         CurrentPage = pageName switch
         {
-            "Dashboard" => "Dashboard",
-            "Inspection" => "Inspection", 
-            "History" => "History",
-            "Monitor" => "Monitor",
-            "Settings" => "Settings",
+            "Dashboard" => _serviceProvider.GetRequiredService<DashboardViewModel>(),
+            "Inspection" => _serviceProvider.GetRequiredService<InspectionViewModel>(),
+            "History" => _serviceProvider.GetRequiredService<HistoryViewModel>(),
+            "Monitor" => _serviceProvider.GetRequiredService<MonitorViewModel>(),
+            "Settings" => _serviceProvider.GetRequiredService<SettingsViewModel>(),
             _ => CurrentPage
         };
     }

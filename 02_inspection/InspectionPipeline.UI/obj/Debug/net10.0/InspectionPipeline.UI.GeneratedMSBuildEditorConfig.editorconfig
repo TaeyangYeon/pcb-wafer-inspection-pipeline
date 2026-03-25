@@ -42,8 +42,17 @@ build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 [/Users/geseuteu/pcb-wafer-inspection-pipeline/02_inspection/InspectionPipeline.UI/Views/DashboardView.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
+[/Users/geseuteu/pcb-wafer-inspection-pipeline/02_inspection/InspectionPipeline.UI/Views/HistoryView.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
 [/Users/geseuteu/pcb-wafer-inspection-pipeline/02_inspection/InspectionPipeline.UI/Views/InspectionView.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
 [/Users/geseuteu/pcb-wafer-inspection-pipeline/02_inspection/InspectionPipeline.UI/Views/MainWindow.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
+[/Users/geseuteu/pcb-wafer-inspection-pipeline/02_inspection/InspectionPipeline.UI/Views/MonitorView.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
+[/Users/geseuteu/pcb-wafer-inspection-pipeline/02_inspection/InspectionPipeline.UI/Views/SettingsView.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml

@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "KaTK8vsKMPE=",
+  "dgSpecHash": "KbSFF266pb8=",
   "success": true,
   "projectFilePath": "/Users/geseuteu/pcb-wafer-inspection-pipeline/02_inspection/InspectionPipeline.Tests/InspectionPipeline.Tests.csproj",
   "expectedPackageFiles": [
@@ -8,6 +8,7 @@
     "/Users/geseuteu/.nuget/packages/avalonia.angle.windows.natives/2.1.25547.20250602/avalonia.angle.windows.natives.2.1.25547.20250602.nupkg.sha512",
     "/Users/geseuteu/.nuget/packages/avalonia.buildservices/11.3.2/avalonia.buildservices.11.3.2.nupkg.sha512",
     "/Users/geseuteu/.nuget/packages/avalonia.controls.colorpicker/11.3.12/avalonia.controls.colorpicker.11.3.12.nupkg.sha512",
+    "/Users/geseuteu/.nuget/packages/avalonia.controls.datagrid/11.3.12/avalonia.controls.datagrid.11.3.12.nupkg.sha512",
     "/Users/geseuteu/.nuget/packages/avalonia.desktop/11.3.12/avalonia.desktop.11.3.12.nupkg.sha512",
     "/Users/geseuteu/.nuget/packages/avalonia.diagnostics/11.3.12/avalonia.diagnostics.11.3.12.nupkg.sha512",
     "/Users/geseuteu/.nuget/packages/avalonia.fonts.inter/11.3.12/avalonia.fonts.inter.11.3.12.nupkg.sha512",

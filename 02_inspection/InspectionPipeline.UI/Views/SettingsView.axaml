@@ -1,0 +1,265 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:InspectionPipeline.UI.ViewModels"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="700"
+             x:Class="InspectionPipeline.UI.Views.SettingsView"
+             x:DataType="vm:SettingsViewModel"
+             Background="{StaticResource Background}">
+
+    <Design.DataContext>
+        <vm:SettingsViewModel/>
+    </Design.DataContext>
+
+    <ScrollViewer>
+        <StackPanel Margin="24,16" Spacing="24">
+            
+            <!-- Header -->
+            <TextBlock Text="Settings"
+                       FontSize="24"
+                       FontWeight="SemiBold"
+                       Foreground="{StaticResource TextPrimary}"
+                       Margin="0,0,0,8"/>
+
+            <!-- API Configuration Section -->
+            <Border Background="{StaticResource Surface}"
+                    BorderBrush="{StaticResource Overlay}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="20,16">
+                <StackPanel Spacing="16">
+                    <TextBlock Text="API Configuration"
+                               FontSize="16"
+                               FontWeight="SemiBold"
+                               Foreground="{StaticResource TextPrimary}"
+                               Margin="0,0,0,8"/>
+                    
+                    <DockPanel>
+                        <TextBlock Text="API Base URL:"
+                                   DockPanel.Dock="Top"
+                                   FontWeight="Medium"
+                                   Foreground="{StaticResource TextPrimary}"
+                                   Margin="0,0,0,8"/>
+                        <TextBox Text="{Binding ApiBaseUrl}"
+                                 Watermark="http://localhost:8502"
+                                 FontFamily="Consolas"/>
+                    </DockPanel>
+
+                    <DockPanel>
+                        <Button Content="Test Connection"
+                                Command="{Binding TestConnectionCommand}"
+                                IsEnabled="{Binding !IsTestingConnection}"
+                                Background="{StaticResource BlueAccent}"
+                                Foreground="White"
+                                Padding="16,8"
+                                CornerRadius="4"
+                                FontWeight="Medium"/>
+                        <TextBlock Text="{Binding StatusMessage}"
+                                   VerticalAlignment="Center"
+                                   Foreground="{StaticResource TextPrimary}"
+                                   Margin="16,0,0,0"/>
+                    </DockPanel>
+
+                </StackPanel>
+            </Border>
+
+            <!-- Inspection Parameters Section -->
+            <Border Background="{StaticResource Surface}"
+                    BorderBrush="{StaticResource Overlay}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="20,16">
+                <StackPanel Spacing="20">
+                    <TextBlock Text="Inspection Parameters"
+                               FontSize="16"
+                               FontWeight="SemiBold"
+                               Foreground="{StaticResource TextPrimary}"
+                               Margin="0,0,0,8"/>
+                    
+                    <!-- Anomaly Threshold -->
+                    <DockPanel>
+                        <TextBlock Text="Anomaly Threshold:"
+                                   DockPanel.Dock="Top"
+                                   FontWeight="Medium"
+                                   Foreground="{StaticResource TextPrimary}"
+                                   Margin="0,0,0,8"/>
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Slider Grid.Column="0"
+                                    Value="{Binding AnomalyThreshold}"
+                                    Minimum="0.0"
+                                    Maximum="1.0"
+                                    TickFrequency="0.1"
+                                    IsSnapToTickEnabled="False"
+                                    VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="1"
+                                       Text="{Binding AnomalyThreshold, StringFormat='F3'}"
+                                       VerticalAlignment="Center"
+                                       FontFamily="Consolas"
+                                       Width="60"
+                                       TextAlignment="Right"
+                                       Margin="12,0,0,0"/>
+                        </Grid>
+                    </DockPanel>
+
+                    <!-- YOLO Confidence Threshold -->
+                    <DockPanel>
+                        <TextBlock Text="YOLO Confidence Threshold:"
+                                   DockPanel.Dock="Top"
+                                   FontWeight="Medium"
+                                   Foreground="{StaticResource TextPrimary}"
+                                   Margin="0,0,0,8"/>
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Slider Grid.Column="0"
+                                    Value="{Binding YoloConfThreshold}"
+                                    Minimum="0.0"
+                                    Maximum="1.0"
+                                    TickFrequency="0.05"
+                                    IsSnapToTickEnabled="False"
+                                    VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="1"
+                                       Text="{Binding YoloConfThreshold, StringFormat='F3'}"
+                                       VerticalAlignment="Center"
+                                       FontFamily="Consolas"
+                                       Width="60"
+                                       TextAlignment="Right"
+                                       Margin="12,0,0,0"/>
+                        </Grid>
+                    </DockPanel>
+
+                    <!-- Auto Save NG -->
+                    <StackPanel Spacing="12">
+                        <CheckBox Content="Auto-save NG (defective) images"
+                                  IsChecked="{Binding AutoSaveNg}"
+                                  FontWeight="Medium"
+                                  Foreground="{StaticResource TextPrimary}"/>
+                        
+                        <DockPanel IsEnabled="{Binding AutoSaveNg}">
+                            <TextBlock Text="NG Save Path:"
+                                       DockPanel.Dock="Top"
+                                       FontWeight="Medium"
+                                       Foreground="{StaticResource TextPrimary}"
+                                       Margin="0,0,0,8"/>
+                            <TextBox Text="{Binding NgSavePath}"
+                                     Watermark="~/Desktop/ng_images/"
+                                     FontFamily="Consolas"/>
+                        </DockPanel>
+                    </StackPanel>
+
+                </StackPanel>
+            </Border>
+
+            <!-- Model Paths Section -->
+            <Border Background="{StaticResource Surface}"
+                    BorderBrush="{StaticResource Overlay}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="20,16">
+                <StackPanel Spacing="16">
+                    <TextBlock Text="Model Paths"
+                               FontSize="16"
+                               FontWeight="SemiBold"
+                               Foreground="{StaticResource TextPrimary}"
+                               Margin="0,0,0,8"/>
+                    
+                    <DockPanel>
+                        <TextBlock Text="PatchCore Model Directory:"
+                                   DockPanel.Dock="Top"
+                                   FontWeight="Medium"
+                                   Foreground="{StaticResource TextPrimary}"
+                                   Margin="0,0,0,8"/>
+                        <TextBox Text="{Binding PatchcoreModelDir}"
+                                 Watermark="models/patchcore/transistor/"
+                                 FontFamily="Consolas"/>
+                    </DockPanel>
+
+                    <DockPanel>
+                        <TextBlock Text="YOLO ONNX Path:"
+                                   DockPanel.Dock="Top"
+                                   FontWeight="Medium"
+                                   Foreground="{StaticResource TextPrimary}"
+                                   Margin="0,0,0,8"/>
+                        <TextBox Text="{Binding YoloOnnxPath}"
+                                 Watermark="models/pcb_seg/best.onnx"
+                                 FontFamily="Consolas"/>
+                    </DockPanel>
+
+                </StackPanel>
+            </Border>
+
+            <!-- File Watcher Section -->
+            <Border Background="{StaticResource Surface}"
+                    BorderBrush="{StaticResource Overlay}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="20,16">
+                <StackPanel Spacing="16">
+                    <TextBlock Text="File Watcher"
+                               FontSize="16"
+                               FontWeight="SemiBold"
+                               Foreground="{StaticResource TextPrimary}"
+                               Margin="0,0,0,8"/>
+                    
+                    <DockPanel>
+                        <TextBlock Text="Watch Folder Path:"
+                                   DockPanel.Dock="Top"
+                                   FontWeight="Medium"
+                                   Foreground="{StaticResource TextPrimary}"
+                                   Margin="0,0,0,8"/>
+                        <TextBox Text="{Binding WatchFolderPath}"
+                                 Watermark="Select folder to monitor for new images..."
+                                 FontFamily="Consolas"/>
+                    </DockPanel>
+
+                    <DockPanel>
+                        <Button Content="{Binding IsWatcherRunning, Converter={x:Static vm:BoolToStartStopConverter.Instance}}"
+                                Command="{Binding ToggleWatcherCommand}"
+                                Background="{Binding IsWatcherRunning, Converter={x:Static vm:BoolToWatcherBrushConverter.Instance}}"
+                                Foreground="White"
+                                Padding="16,8"
+                                CornerRadius="4"
+                                FontWeight="Medium"/>
+                        <TextBlock Text="{Binding IsWatcherRunning, Converter={x:Static vm:BoolToWatcherStatusConverter.Instance}}"
+                                   Foreground="{Binding IsWatcherRunning, Converter={x:Static vm:BoolToWatcherStatusBrushConverter.Instance}}"
+                                   VerticalAlignment="Center"
+                                   FontWeight="Medium"
+                                   Margin="16,0,0,0"/>
+                    </DockPanel>
+
+                </StackPanel>
+            </Border>
+
+            <!-- Action Buttons -->
+            <Grid ColumnDefinitions="Auto,16,Auto,*,Auto" Margin="0,16,0,0">
+                
+                <Button Grid.Column="0"
+                        Content="Save Settings"
+                        Command="{Binding SaveSettingsCommand}"
+                        Background="{StaticResource GreenOK}"
+                        Foreground="White"
+                        Padding="20,10"
+                        CornerRadius="4"
+                        FontWeight="SemiBold"/>
+
+                <Button Grid.Column="2"
+                        Content="Reset to Defaults"
+                        Command="{Binding ResetToDefaultsCommand}"
+                        Background="{StaticResource YellowWarn}"
+                        Foreground="White"
+                        Padding="20,10"
+                        CornerRadius="4"
+                        FontWeight="SemiBold"/>
+
+                <TextBlock Grid.Column="4"
+                           Text="{Binding StatusMessage}"
+                           VerticalAlignment="Center"
+                           FontStyle="Italic"
+                           Foreground="{StaticResource TextPrimary}"
+                           Opacity="0.8"/>
+
+            </Grid>
+
+        </StackPanel>
+    </ScrollViewer>
+
+</UserControl>

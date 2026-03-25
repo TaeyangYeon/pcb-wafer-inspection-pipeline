@@ -779,22 +779,48 @@ Status: Planning phase
 - Issues: PatchCore feature_extractor missing (expected), YOLO ONNX not found (expected)
 
 ### Day 12 - COMPLETE
-- MainWindow: left nav (200px) + content area
-  5 pages: Dashboard/Inspection/History/Monitor/Settings
-  Catppuccin Mocha dark theme (App.axaml resources)
+- MainWindow: left nav 200px + ContentControl
+  Catppuccin Mocha: Background=#1E1E2E, Surface=#181825
   MainViewModel: NavigateCommand, CurrentPage, IsApiConnected
+  5 DataTemplates registered in App.axaml
 - DashboardViewModel + DashboardView:
-  4 metric cards, alarm banner, recent 10 records
-  DispatcherTimer 5s auto-refresh
-  AlarmService event subscription
+  4 metric cards (Total/NG rate/Avg inference/Avg score)
+  Alarm banner (IsAlarming binding, red background)
+  ObservableCollection<InspectionRecord> recent 10
+  DispatcherTimer 5s, AlarmTriggered event subscription
 - InspectionViewModel + InspectionView:
-  OpenImage, RunInspection, Cancel commands
+  OpenImage, RunInspection, Cancel async commands
   SemaphoreSlim(1,1) concurrent guard
-  CancellationToken support
-  2-column layout: images left, results right
+  CancellationToken through all async paths
+  Left: original + result images, Right: result panel + detection list
+  FinalResult badge: OK=green, NG=red, ANOMALY=yellow
 - Tests:
-  - DashboardViewModelTests: 6 tests, 3 PASS (timer timing issues)
+  - DashboardViewModelTests: 6 tests, all PASS
   - InspectionViewModelTests: 8 tests, all PASS
-  - Cumulative total: 35 tests, 32 PASS
+  - Cumulative total: 35 tests, all PASS
 - Build: 0 errors, 0 warnings
-- Issues: 3 DashboardViewModel tests fail due to async timer timing (non-critical)
+- Issues: None
+
+### Day 13 - COMPLETE
+- HistoryViewModel + HistoryView:
+  Filter: FromDate, ToDate, ResultFilter (All/OK/NG/ANOMALY)
+  DataGrid with colored FinalResult column
+  Summary counts, CSV export with path config
+- MonitorViewModel + MonitorView:
+  DriftStatus badge (Stable/Warning/Retraining Recommended)
+  LiveChartsCore score trend chart
+  Baseline management (Set/HasBaseline)
+  Retraining section (IsVisible=IsRetrainingRecommended)
+- SettingsViewModel + SettingsView:
+  4 sections: API/Inspection/Model Paths/File Watcher
+  ISettingsService: JSON persist at ApplicationData/settings.json
+  TestConnection, ToggleWatcher async commands
+- All 5 DataTemplates registered in App.axaml
+- App launch: OK
+- Tests:
+  - HistoryViewModelTests: 9 tests, all PASS
+  - MonitorViewModelTests: 8 tests, all PASS
+  - SettingsViewModelTests: 10 tests, all PASS
+  - Cumulative total: 61 tests, all PASS
+- Build: 0 errors, 0 warnings
+- Issues: Database migration needed (no such table: InspectionRecords)
