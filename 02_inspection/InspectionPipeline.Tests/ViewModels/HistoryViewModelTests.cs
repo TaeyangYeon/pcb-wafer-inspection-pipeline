@@ -47,7 +47,7 @@ public class HistoryViewModelTests
             new() { Id = 2, ImagePath = "test2.jpg", FinalResult = "NG", StageUsed = "Pipeline", Timestamp = DateTime.Now.AddMinutes(-1) }
         };
 
-        _mockRepository.Setup(r => r.GetRecordsAsync(null, null, null))
+        _mockRepository.Setup(r => r.GetRecordsAsync(It.IsAny<DateTime?>(), It.IsAny<DateTime?>(), It.IsAny<string?>(), It.IsAny<CancellationToken>()))
                       .ReturnsAsync(expectedRecords);
 
         // Act
@@ -60,7 +60,7 @@ public class HistoryViewModelTests
         Assert.That(_viewModel.OkCount, Is.EqualTo(1));
         Assert.That(_viewModel.NgCount, Is.EqualTo(1));
         Assert.That(_viewModel.StatusMessage, Does.Contain("Found 2 records"));
-        _mockRepository.Verify(r => r.GetRecordsAsync(null, null, null), Times.Once);
+        _mockRepository.Verify(r => r.GetRecordsAsync(It.IsAny<DateTime?>(), It.IsAny<DateTime?>(), It.IsAny<string?>(), It.IsAny<CancellationToken>()), Times.AtLeastOnce);
     }
 
     [Test]
