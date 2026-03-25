@@ -3,6 +3,7 @@ using System.IO;
 using System.Net.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using InspectionPipeline.Core.Data;
 using InspectionPipeline.Core.Interfaces;
 using InspectionPipeline.Core.Services;
@@ -26,6 +27,9 @@ public static class ServiceCollectionExtensions
     {
         if (string.IsNullOrWhiteSpace(apiBaseUrl))
             throw new ArgumentException("API base URL cannot be null or empty.", nameof(apiBaseUrl));
+
+        // Configure logging
+        services.AddLogging();
 
         // Configure Entity Framework with SQLite
         var dbPath = Path.Combine(
@@ -58,6 +62,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IFileWatcherService, FileWatcherService>();
         services.AddSingleton<IDriftMonitor, DriftMonitor>();
         services.AddSingleton<IAlarmService, AlarmService>();
+        services.AddSingleton<IImageOverlayRenderer, ImageOverlayRenderer>();
         services.AddSingleton<ISettingsService, SettingsService>();
 
         return services;

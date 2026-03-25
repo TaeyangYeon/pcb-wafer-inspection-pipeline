@@ -1,0 +1,82 @@
+Summary
+  Generated on: 2026. 3. 25. - 오후 2:20:21
+  Coverage date: 2026. 3. 25. - 오후 2:10:14
+  Parser: Cobertura
+  Assemblies: 2
+  Classes: 58
+  Files: 49
+  Line coverage: 52.1%
+  Covered lines: 1576
+  Uncovered lines: 1447
+  Coverable lines: 3023
+  Total lines: 5988
+  Branch coverage: 38.4% (154 of 401)
+  Covered branches: 154
+  Total branches: 401
+  Method coverage: 66.4% (202 of 304)
+  Full method coverage: 54.6% (166 of 304)
+  Covered methods: 202
+  Fully covered methods: 166
+  Total methods: 304
+
+InspectionPipeline.Core                                                      70.5%
+  InspectionPipeline.Core.Data.InspectionDbContext                            100%
+  InspectionPipeline.Core.Data.InspectionDbContextFactory                       0%
+  InspectionPipeline.Core.Data.Migrations.InitialCreate                        97%
+  InspectionPipeline.Core.Data.Migrations.InspectionDbContextModelSnapshot    100%
+  InspectionPipeline.Core.Exceptions.InspectionApiException                   100%
+  InspectionPipeline.Core.Extensions.ServiceCollectionExtensions                0%
+  InspectionPipeline.Core.Models.AlarmEvent                                   100%
+  InspectionPipeline.Core.Models.AnomalyResult                                 75%
+  InspectionPipeline.Core.Models.AppSettings                                  100%
+  InspectionPipeline.Core.Models.BoundingBox                                  100%
+  InspectionPipeline.Core.Models.DefectClassStats                             100%
+  InspectionPipeline.Core.Models.DefectDetail                                  80%
+  InspectionPipeline.Core.Models.DefectDetection                              100%
+  InspectionPipeline.Core.Models.DistributionStats                            100%
+  InspectionPipeline.Core.Models.DriftReport                                  100%
+  InspectionPipeline.Core.Models.DriftStatus                                    0%
+  InspectionPipeline.Core.Models.ImageDimensions                                0%
+  InspectionPipeline.Core.Models.InspectionMetadata                             0%
+  InspectionPipeline.Core.Models.InspectionRecord                             100%
+  InspectionPipeline.Core.Models.ModelVersion                                 100%
+  InspectionPipeline.Core.Models.PipelineResult                               100%
+  InspectionPipeline.Core.Models.Point                                          0%
+  InspectionPipeline.Core.Models.SegmentationMask                              50%
+  InspectionPipeline.Core.Models.SegmentationResult                          83.3%
+  InspectionPipeline.Core.Models.SessionStats                                61.9%
+  InspectionPipeline.Core.Services.AlarmService                              96.1%
+  InspectionPipeline.Core.Services.DetectionDto                                 0%
+  InspectionPipeline.Core.Services.DriftMonitor                              83.3%
+  InspectionPipeline.Core.Services.FileWatcherService                        27.4%
+  InspectionPipeline.Core.Services.HealthResponse                               0%
+  InspectionPipeline.Core.Services.ImageOverlayRenderer                       4.8%
+  InspectionPipeline.Core.Services.InspectionApiClient                       27.1%
+  InspectionPipeline.Core.Services.InspectionRepository                      86.3%
+  InspectionPipeline.Core.Services.InspectRequest                             100%
+  InspectionPipeline.Core.Services.InspectResponse                              0%
+  InspectionPipeline.Core.Services.SettingsService                           31.7%
+
+InspectionPipeline.UI                                                        33.7%
+  InspectionPipeline.UI.App                                                     0%
+  InspectionPipeline.UI.DependencyInjection.ServiceCollectionExtensions      93.3%
+  InspectionPipeline.UI.Program                                                 0%
+  InspectionPipeline.UI.ViewLocator                                             0%
+  InspectionPipeline.UI.ViewModels.BoolToStartStopConverter                     0%
+  InspectionPipeline.UI.ViewModels.BoolToWatcherBrushConverter                  0%
+  InspectionPipeline.UI.ViewModels.BoolToWatcherStatusBrushConverter            0%
+  InspectionPipeline.UI.ViewModels.BoolToWatcherStatusConverter                 0%
+  InspectionPipeline.UI.ViewModels.DashboardViewModel                        63.5%
+  InspectionPipeline.UI.ViewModels.DetectionItem                              100%
+  InspectionPipeline.UI.ViewModels.HistoryViewModel                          68.1%
+  InspectionPipeline.UI.ViewModels.InspectionViewModel                       72.5%
+  InspectionPipeline.UI.ViewModels.MainViewModel                                0%
+  InspectionPipeline.UI.ViewModels.MainWindowViewModel                          0%
+  InspectionPipeline.UI.ViewModels.MonitorViewModel                          76.8%
+  InspectionPipeline.UI.ViewModels.SettingsViewModel                         84.3%
+  InspectionPipeline.UI.Views.DashboardView                                     0%
+  InspectionPipeline.UI.Views.HistoryView                                       0%
+  InspectionPipeline.UI.Views.InspectionView                                    0%
+  InspectionPipeline.UI.Views.MainWindow                                        0%
+  InspectionPipeline.UI.Views.MonitorView                                       0%
+  InspectionPipeline.UI.Views.SettingsView                                      0%
